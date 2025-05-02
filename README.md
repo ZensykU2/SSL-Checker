@@ -7,9 +7,9 @@ It notifies users about expiring certificates and provides a web interface to ma
 
 ##  Requirements
 
-- Python 3.10+
-- Pip
-- PostgreSQL (e.g. [Download Here](https://www.postgresql.org/download/))
+- Python 3.13+
+- Pip 25.0.0 +
+- PostgreSQL 16+ (e.g. [Download Here](https://www.postgresql.org/download/))
 - Git
 - SendGrid account (for email notifications)
 
@@ -41,15 +41,22 @@ pip install -r requirements.txt
 ```
 ## PostgreSQL Setup
 
-### 1. Start PostgreSQL and access with your root user
+
+### 2. Start PostgreSQL and access with your root user
+
+If you don't want to run PostgreSQL on your local machine, use the init_db_sql scripts content on the machine that has it installed.
+Change the .env file accordingly to connect to your external machine, the default port is 5432.
+
 ```bash
 psql -u (your root user) -f init_db.sql
 ```
+
 ## Environment Configuration
 
 ### 1. Create a .env file in the project root
 
-use .env.example as a template
+- Use .env.example as a template
+
 
 ## Alembic (Database Migrations)
 
