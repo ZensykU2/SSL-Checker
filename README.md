@@ -51,13 +51,13 @@ psql -u (your root user) -f init_db.sql
 
 use .env.example as a template
 
-### Alembic (Database Migrations)
+## Alembic (Database Migrations)
 
-## 1. Initialize Alembic (once)
+### 1. Initialize Alembic (once)
 ```bash
 alembic init alembic
 ```
-## 2. Configure alembic/env.py
+### 2. Configure alembic/env.py
 
 Update the following:
 
@@ -88,7 +88,7 @@ target_metadata = None
 ```bash
 target_metadata = Base.metadata
 ```
-## 3. Generate and apply initial migration
+### 3. Generate and apply initial migration
 ```bash
 alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
