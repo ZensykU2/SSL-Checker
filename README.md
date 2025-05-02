@@ -61,7 +61,7 @@ alembic init alembic
 Update the following:
 
 - Add this at the top:
-
+```bash
 import os
 import sys
 from dotenv import load_dotenv
@@ -70,16 +70,23 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.database import Base
 from app import models
 load_dotenv()
-
-- Set database URL from .env:
+```
+- Find the following line:
+```bash
+config.set_main_option("sqlalchemy.url", "your-database-url-here")
+```
+- Replace it with database URL from .env:
+```bash
 config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
-
+```
 - Replace:
+```bash
 target_metadata = None
-
+```
 - With:
+```bash
 target_metadata = Base.metadata
-
+```
 ## 3. Generate and apply initial migration
 ```bash
 alembic revision --autogenerate -m "Initial migration"
