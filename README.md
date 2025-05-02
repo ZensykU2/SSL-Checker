@@ -26,10 +26,11 @@ cd SSL-Checker
 
 python -m venv venv
 
-Windows:
+- Windows:
+
 venv\Scripts\activate
 
-macOS/Linux:
+- macOS/Linux:
 source venv/bin/activate
 
 ### 3. Install dependencies
@@ -59,6 +60,7 @@ alembic init alembic
 Update the following:
 
 - Add this at the top:
+
 import os
 import sys
 from dotenv import load_dotenv
@@ -102,5 +104,8 @@ http://127.0.0.1:8000
 - Set your API key in the .env file.
 - Emails are sent to the address associated with each website entry.
 
+## User Accounts
 
+- Admin: admin | PW: admin123
+- User: user | PW: user123
 
