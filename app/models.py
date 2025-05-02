@@ -15,7 +15,7 @@ class Website(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", backref="websites")
 
-    logs = relationship("CheckLog", back_populates="website")
+    logs = relationship("CheckLog", back_populates="website", cascade="all, delete-orphan")
 
 class CheckLog(Base):
     __tablename__ = "check_logs"

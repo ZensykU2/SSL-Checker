@@ -128,7 +128,7 @@ async def register_user(
 
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_form(request: Request, current_user: models.User = Depends(get_current_user)):
-    return templates.TemplateResponse("profile.html", {"request": request, "user": current_user})
+    return templates.TemplateResponse("profile.html", {"request": request, "user": current_user, "is_admin": current_user.is_admin})
 
 @app.post("/profile", response_class=HTMLResponse)
 async def update_profile(
@@ -152,7 +152,7 @@ async def list_users(request: Request, db: Session = Depends(get_db), current_us
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Nur Admins dürfen diese Seite sehen.")
     users = db.query(models.User).all()
-    return templates.TemplateResponse("users.html", {"request": request, "users": users, "current_user_id": current_user.id})
+    return templates.TemplateResponse("users.html", {"request": request, "users": users, "current_user_id": current_user.id, "is_admin": current_user.is_admin})
 
 @app.post("/users/toggle-admin/{user_id}")
 async def toggle_admin(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -188,8 +188,8 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), current_user:
     return RedirectResponse(url="/users", status_code=303)
 
 @app.get("/create-admin-form", response_class=HTMLResponse)
-async def create_admin_form(request: Request):
-    return templates.TemplateResponse("create_admin.html", {"request": request})
+async def create_admin_form(request: Request, current_user: models.User = Depends(get_current_user)):
+    return templates.TemplateResponse("create_admin.html", {"request": request, "is_admin": current_user.is_admin})
 
 @app.post("/create-admin")
 async def create_admin(username: str = Form(...), password: str = Form(...),email: str = Form(...),
@@ -223,21 +223,23 @@ async def submit_form(request: Request, url: str = Form(...), email: str = Form(
     try:
         db.add(entry)
         db.commit()
-        return templates.TemplateResponse("index.html", {"request": request, "message": "Gespeichert!", "user_email": current_user.email})
+        return templates.TemplateResponse("index.html", {"request": request, "message": "Gespeichert!", "user_email": current_user.email, "is_admin": current_user.is_admin})
     except IntegrityError:
         db.rollback()
-        return templates.TemplateResponse("index.html", {"request": request, "error": "Diese URL existiert bereits.", "user_email": current_user.email})
+        return templates.TemplateResponse("index.html", {"request": request, "error": "Diese URL existiert bereits.", "user_email": current_user.email, "is_admin": current_user.is_admin})
+
 
 @app.get("/my-websites", response_class=HTMLResponse)
 async def my_websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     websites = db.query(Website).filter(Website.user_id == current_user.id).all()
-    return templates.TemplateResponse("my_websites.html", {"request": request, "websites": websites})
+    return templates.TemplateResponse("my_websites.html", {"request": request, "websites": websites, "is_admin": current_user.is_admin})
 
 @app.post("/my-websites/delete/{website_id}")
 async def delete_my_website(website_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     website = db.query(Website).filter(Website.id == website_id, Website.user_id == current_user.id).first()
     if not website:
         raise HTTPException(status_code=403, detail="Nicht erlaubt.")
+    db.query(CheckLog).filter(CheckLog.website_id == website_id).delete()
     db.delete(website)
     db.commit()
     return RedirectResponse(url="/my-websites", status_code=303)
@@ -248,14 +250,14 @@ async def websites(request: Request, db: Session = Depends(get_db), current_user
     if not current_user.is_admin:
         return templates.TemplateResponse("unauthorized.html", {"request": request}, status_code=403)
     websites = db.query(Website).all()
-    return templates.TemplateResponse("websites.html", {"request": request, "websites": websites})
+    return templates.TemplateResponse("websites.html", {"request": request, "websites": websites, "is_admin": current_user.is_admin})
 
 @app.get("/logs", response_class=HTMLResponse)
 async def logs(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Zugriff verweigert.")
     logs = db.query(CheckLog).join(Website).order_by(CheckLog.checked_at.desc()).all()
-    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs})
+    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs, "is_admin": current_user.is_admin})
 
 @app.post("/delete/{website_id}")
 async def delete_website(website_id: int, db: Session = Depends(get_db)):
