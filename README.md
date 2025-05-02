@@ -18,19 +18,17 @@ It notifies users about expiring certificates and provides a web interface to ma
 
 ### 1. Clone the project
 
-
+```bash
 git clone http://192.168.100.68:3000/CristianTorre/SSL-Checker.git
 cd SSL-Checker
-
-### 2. Create and activate virtual environment
-
 python -m venv venv
 
-- Windows:
+# Activate it:
 
+# Windows 
 venv\Scripts\activate
 
-- macOS/Linux:
+# macOS/Linux: 
 source venv/bin/activate
 
 ### 3. Install dependencies
