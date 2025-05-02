@@ -1,13 +1,31 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="de" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nicht autorisiert</title>
-</head>
-<body>
-    <h1>Du bist nicht autorisiert, diese Seite zu sehen!</h1>
-    <p>Bitte logge dich ein, um fortzufahren.</p>
-    <a href="/login">Zur Login-Seite</a>
-</body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <script src="/static/js/theme-toggle.js"></script>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center min-h-screen">
+    <div class="text-center space-y-6 max-w-lg px-6">
+      <h1 class="text-3xl font-bold text-red-600 dark:text-red-400">Zugriff verweigert</h1>
+      <p class="text-lg">Du bist nicht autorisiert, diese Seite zu sehen.</p>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        Bitte logge dich ein, um fortzufahren.
+      </p>
+
+      <a
+        href="/login"
+        class="inline-block bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+      >
+        Zur Login-Seite
+      </a>
+    </div>
+  </body>
 </html>

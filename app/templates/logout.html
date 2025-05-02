@@ -1,17 +1,34 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
+<html lang="de" class="">
+  <head>
+    <meta charset="UTF-8" />
     <title>Abgemeldet</title>
-    <meta http-equiv="refresh" content="20;url=/login">
-</head>
-<body>
-    <h2>Du wurdest erfolgreich abgemeldet.</h2>
-    <p>Danke für deinen Besuch!</p>
-    <p>Du wirst in 20 Sekunden automatisch zum Login weitergeleitet</p>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="20;url=/login" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <script src="/static/js/theme-toggle.js"></script>
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex items-center justify-center min-h-screen">
+    <div class="text-center space-y-6 max-w-lg px-6">
+      <h1 class="text-3xl font-bold">Du wurdest erfolgreich abgemeldet</h1>
+      <p class="text-lg">Danke für deinen Besuch!</p>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        Du wirst in <span class="font-semibold">20 Sekunden</span> automatisch zum Login weitergeleitet.
+      </p>
 
-    <form action="/login">
-        <button type="submit">Erneut einloggen</button>
-    </form>
-</body>
+      <form action="/login">
+        <button
+          type="submit"
+          class="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+        >
+          Erneut einloggen
+        </button>
+      </form>
+    </div>
+  </body>
 </html>
