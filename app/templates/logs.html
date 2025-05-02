@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Logs</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        form.inline {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Überprüfungs-Logs</h1>
+
+    
+    <form method="get" action="/logs/filter">
+        <label for="start">Startzeit:</label>
+        <input type="datetime-local" name="start" id="start">
+        <label for="end">Endzeit:</label>
+        <input type="datetime-local" name="end" id="end">
+        <button type="submit">Filtern</button>
+    </form>
+
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Website</th>
+                <th>Geprüft am</th>
+                <th>Ablaufdatum</th>
+                <th>Tage verbleibend</th>
+                <th>E-Mail gesendet?</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.website.url }}</td>
+                <td>{{ log.checked_at.strftime("%d.%m.%Y %H:%M") }}</td>
+                <td>
+                    {% if log.expiry_date %}
+                        {{ log.expiry_date.strftime("%d.%m.%Y") }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if log.remaining_days is not none %}
+                        {{ log.remaining_days }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ "Ja" if log.email_sent else "Nein" }}</td>
+                <td>
+                    
+                    <form method="post" action="/logs/delete/{{ log.id }}" class="inline">
+                        <button type="submit">Löschen</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-bottom: 20px;">
+        <a href="/">
+            <button>Startseite</button>
+        </a>
+        <a href="/websites">
+            <button>Websites anzeigen</button>
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>User Verwaltung</title>
+</head>
+<body>
+    <h2>Alle Benutzer</h2>
+    <table border="1">
+        <tr>
+            <th>Benutzername</th>
+            <th>Email</th>
+            <th>Rolle</th>
+            <th>Aktion</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ 'Admin' if user.is_admin else 'User' }}</td>
+            <td>
+                <form method="post" action="/users/toggle-admin/{{ user.id }}" style="display:inline;">
+                    <button type="submit">
+                        {{ 'Zu User machen' if user.is_admin else 'Zu Admin machen' }}
+                    </button>
+                </form>
+                <form method="post" action="/users/delete/{{ user.id }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Bist du sicher, dass du diesen Benutzer löschen möchtest?');">
+                         Löschen
+                    </button>
+                </form>
+            </td>            
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

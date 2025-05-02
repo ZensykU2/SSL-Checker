@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil</title>
+</head>
+<body>
+    <h2>Dein Profil</h2>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <form method="post">
+        <label>Benutzername:
+            <input type="text" name="username" value="{{ user.username }}" required>
+        </label><br><br>
+
+        <label>E-Mail:
+            <input type="email" name="email" value="{{ user.email }}" required>
+        </label><br><br>
+
+        <label>Passwort ändern:
+            <input type="password" name="password" placeholder="Neues Passwort">
+        </label><br><br>
+
+        <button type="submit">Änderungen speichern</button>
+    </form>
+</body>
+</html>

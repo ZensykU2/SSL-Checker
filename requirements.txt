@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+psycopg2-binary
+sendgrid
+aiohttp
+schedule
+python-dotenv
+python-multipart
+passlib[bcrypt]
+python-jose[cryptography]
+alembic

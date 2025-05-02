@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gespeicherte Websites</title>
+</head>
+<body>
+    <h1>Gespeicherte Websites</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Website</th>
+                <th>E-Mail</th>
+                <th>Schwellenwert (Tage)</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for website in websites %}
+            <tr>
+                <td>{{ website.url }}</td>
+                <td>{{ website.email }}</td>
+                <td>{{ website.threshold_days }}</td>
+                <td>
+                    <form action="/delete/{{ website.id }}" method="post" style="display:inline;">
+                        <button type="submit">Löschen</button>
+                    </form>
+                    <form action="/send-email/{{ website.id }}" method="post" style="display:inline;">
+                        <button type="submit">E-Mail senden</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="margin-bottom: 20px;">
+        <a href="/"><button>Startseite</button></a>
+        <a href="/logs"><button>Logs Anzeigen</button></a>
+    </div>
+</body>
+</html>
