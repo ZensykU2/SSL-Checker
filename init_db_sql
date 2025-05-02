@@ -1,0 +1,5 @@
+CREATE USER ssl_user WITH PASSWORD 'ssl_user123';
+CREATE DATABASE ssl_checker OWNER ssl_user;
+REVOKE ALL ON DATABASE ssl_checker FROM PUBLIC;
+GRANT ALL PRIVILEGES ON DATABASE ssl_checker TO postgres;
+
