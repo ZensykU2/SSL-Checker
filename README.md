@@ -21,26 +21,29 @@ It notifies users about expiring certificates and provides a web interface to ma
 ```bash
 git clone http://192.168.100.68:3000/CristianTorre/SSL-Checker.git
 cd SSL-Checker
+```
+### 2. Create and activate virtual environment
+```bash
 python -m venv venv
-
-# Activate it:
-
-# Windows 
+```
+- Windows: 
+```bash
 venv\Scripts\activate
-
-# macOS/Linux: 
+```
+- macOS/Linux: 
+```bash
 source venv/bin/activate
-
+```
 ### 3. Install dependencies
-
+```bash
 pip install -r requirements.txt
-
+```
 ## PostgreSQL Setup
 
 ### 1. Start PostgreSQL and access with your root user
-
+```bash
 psql -u (your root user) -f init_db.sql
-
+```
 ## Environment Configuration
 
 ### 1. Create a .env file in the project root
@@ -50,9 +53,9 @@ use .env.example as a template
 ### Alembic (Database Migrations)
 
 ## 1. Initialize Alembic (once)
-
+```bash
 alembic init alembic
-
+```
 ## 2. Configure alembic/env.py
 
 Update the following:
@@ -78,20 +81,22 @@ target_metadata = None
 target_metadata = Base.metadata
 
 ## 3. Generate and apply initial migration
-
+```bash
 alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
-
+```
 ## Seed Initial Users
 
 ### Create users
 
 - Create admin and regular user by running:
+```bash
 python seed_users.py
-
+```
 ## Run the App
-
+```bash
 uvicorn app.main:app --reload
+```
 
 App will be available at:
 http://127.0.0.1:8000
