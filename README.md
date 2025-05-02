@@ -8,6 +8,7 @@ It notifies users about expiring certificates and provides a web interface to ma
 ##  Requirements
 
 - Python 3.10+
+- Pip
 - PostgreSQL (e.g. [Download Here](https://www.postgresql.org/download/))
 - Git
 - SendGrid account (for email notifications)
