@@ -12,8 +12,9 @@
     </script>
     <script src="/static/js/theme-toggle.js"></script>
   </head>
-  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex">
-    
+  <body
+    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex"
+  >
     <aside
       class="w-64 bg-white dark:bg-gray-800 p-4 flex flex-col justify-between shadow-md"
     >
@@ -38,10 +39,9 @@
           Mein Profil
         </button>
         <hr class="border-gray-300 dark:border-gray-600" />
-        
+
         {% if is_admin %}
 
-        
         <button
           onclick="window.location.href='/websites'"
           class="flex items-center gap-2 text-left w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -131,11 +131,20 @@
           onclick="window.location.href='/'"
           class="flex items-center gap-2 text-left w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 19.5 8.25 12l7.5-7.5"
+            />
           </svg>
-          
-          
 
           SSL Checker
         </button>
@@ -204,7 +213,9 @@
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
           <thead>
-            <tr class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold">
+            <tr
+              class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold"
+            >
               <th class="px-4 py-3">URL</th>
               <th class="px-4 py-3">E-Mail</th>
               <th class="px-4 py-3">Schwellenwert (Tage)</th>
@@ -213,7 +224,9 @@
           </thead>
           <tbody>
             {% for site in websites %}
-            <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            <tr
+              class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            >
               <td class="px-4 py-2">{{ site.url }}</td>
               <td class="px-4 py-2">{{ site.email }}</td>
               <td class="px-4 py-2">{{ site.threshold_days }}</td>
