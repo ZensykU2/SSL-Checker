@@ -12,5 +12,5 @@ def get_ssl_expiry_date(hostname: str) -> datetime:
                 expiry_date = datetime.strptime(expiry_str, '%b %d %H:%M:%S %Y %Z')
                 return expiry_date.replace(tzinfo=timezone.utc)
     except Exception as e:
-        print(f"Fehler bei {hostname}: {e}")
+        print(f"Issues at {hostname}: {e}")
         return None

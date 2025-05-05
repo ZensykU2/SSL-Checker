@@ -8,6 +8,7 @@ from starlette.status import HTTP_303_SEE_OTHER
 from typing import Optional
 from datetime import datetime
 from jose import JWTError
+from fastapi.responses import JSONResponse
 
 from fastapi.staticfiles import StaticFiles
 from . import models, schemas, password_utils, security
@@ -21,7 +22,6 @@ from .tasks import check_certificates_loop
 
 
 models.Base.metadata.create_all(bind=engine)
-
 
 app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
@@ -59,7 +59,10 @@ def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = D
 async def http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == 401:
         return templates.TemplateResponse("unauthorized.html", {"request": request})
-    return await request.app.default_exception_handler(request, exc)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail":exc.detail}
+    )
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
@@ -89,7 +92,6 @@ async def login_for_token(
     response = RedirectResponse(url="/", status_code=303)
     response.set_cookie(key="access_token", value=access_token)
     return response
-
 
 @app.get("/logout", response_class=HTMLResponse)
 async def logout(request: Request):
@@ -124,7 +126,6 @@ async def register_user(
     db.add(new_user)
     db.commit()
     return RedirectResponse(url="/login", status_code=HTTP_303_SEE_OTHER)
-
 
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_form(request: Request, current_user: models.User = Depends(get_current_user)):
@@ -228,7 +229,6 @@ async def submit_form(request: Request, url: str = Form(...), email: str = Form(
         db.rollback()
         return templates.TemplateResponse("index.html", {"request": request, "error": "Diese URL existiert bereits.", "user_email": current_user.email, "is_admin": current_user.is_admin})
 
-
 @app.get("/my-websites", response_class=HTMLResponse)
 async def my_websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     websites = db.query(Website).filter(Website.user_id == current_user.id).all()
@@ -243,7 +243,6 @@ async def delete_my_website(website_id: int, db: Session = Depends(get_db), curr
     db.delete(website)
     db.commit()
     return RedirectResponse(url="/my-websites", status_code=303)
-
 
 @app.get("/websites", response_class=HTMLResponse)
 async def websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -287,18 +286,28 @@ async def delete_log(log_id: int, db: Session = Depends(get_db)):
     raise HTTPException(status_code=404, detail="Log nicht gefunden")
 
 @app.post("/send-email/{website_id}")
-async def send_email(website_id: int, db: Session = Depends(get_db)):
+async def send_email(website_id: int, request: Request, db: Session = Depends(get_db)):
     website = db.query(Website).filter(Website.id == website_id).first()
-    if website:
-        latest_log = db.query(CheckLog).filter(CheckLog.website_id == website_id).order_by(CheckLog.checked_at.desc()).first()
-        if latest_log and latest_log.expiry_date:
-            expiry_date = latest_log.expiry_date
-            remaining_days = (expiry_date - datetime.now()).days
-            send_ssl_warning_email(website.email, website.url, expiry_date, remaining_days)
-            return {"message": f"E-Mail für {website.url} gesendet!"}
-        else:
-            raise HTTPException(status_code=404, detail="Kein Ablaufdatum gefunden.")
-    else:
-        raise HTTPException(status_code=404, detail="Website nicht gefunden")
+    if not website:
+        return RedirectResponse(url="/websites?error=Website+nicht+gefunden", status_code=HTTP_303_SEE_OTHER)
+
+    latest_log = (
+        db.query(CheckLog)
+        .filter(CheckLog.website_id == website_id)
+        .order_by(CheckLog.checked_at.desc())
+        .first()
+    )
+
+    if not latest_log or not latest_log.expiry_date:
+        return RedirectResponse(url="/websites?error=Kein+Ablaufdatum+gefunden", status_code=HTTP_303_SEE_OTHER)
+
+    expiry_date = latest_log.expiry_date
+    remaining_days = (expiry_date - datetime.now()).days
+    send_ssl_warning_email(website.email, website.url, expiry_date, remaining_days)
+
+    return RedirectResponse(
+        url=f"/websites?success=E-Mail+an+{website.email}+gesendet", status_code=HTTP_303_SEE_OTHER
+    )
+
 
 check_certificates_loop()

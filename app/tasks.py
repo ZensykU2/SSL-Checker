@@ -20,11 +20,16 @@ def check_certificates_loop(interval_seconds: int = 21600):
                         print(f"⚠️ No SSL-Data for {site.url}")
                         continue
 
-                    remaining_days = (expiry_date - datetime.now(timezone.utc)).days
+                    now_utc = datetime.now(timezone.utc)
+                    remaining_days = (expiry_date - now_utc).days
                     email_sent = False
 
+                    next_warning = site.next_warning
+                    if next_warning is not None and next_warning.tzinfo is None:
+                        next_warning = next_warning.replace(tzinfo=timezone.utc)
+
                     if remaining_days <= site.threshold_days:
-                        if site.next_warning is None or datetime.now(timezone.utc) >= site.next_warning:
+                        if next_warning is None or now_utc >= next_warning:
                             send_ssl_warning_email(
                                 to_email=site.email,
                                 website_url=site.url,
@@ -39,19 +44,21 @@ def check_certificates_loop(interval_seconds: int = 21600):
                                 1
                             ]
                             next_interval_days = next(
-                                (i for i in next_intervals if i < remaining_days), 
+                                (i for i in next_intervals if i < remaining_days),
                                 None
                             )
 
                             if next_interval_days:
                                 site.next_warning = expiry_date - timedelta(days=next_interval_days)
+                                site.next_warning = site.next_warning.replace(tzinfo=timezone.utc)
                             else:
-                                site.next_warning = None 
+                                site.next_warning = None
 
                             db.commit()
                     else:
                         print(f"✅ {site.url} is OK ({remaining_days} days)")
 
+                    # Log-Eintrag erstellen
                     log_entry = CheckLog(
                         website_id=site.id,
                         expiry_date=expiry_date,
