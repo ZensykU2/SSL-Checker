@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Logs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -10,8 +10,10 @@
       };
     </script>
     <script src="/static/js/theme-toggle.js"></script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex">
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex"
+  >
     <aside
       class="w-64 bg-white dark:bg-gray-800 p-4 flex flex-col justify-between shadow-md"
     >
@@ -36,10 +38,9 @@
           Mein Profil
         </button>
         <hr class="border-gray-300 dark:border-gray-600" />
-        
+
         {% if is_admin %}
 
-        
         <button
           onclick="window.location.href='/websites'"
           class="flex items-center gap-2 text-left w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -61,7 +62,7 @@
 
           Alle Websites
         </button>
-        
+
         <button
           onclick="window.location.href='/users'"
           class="flex items-center gap-2 text-left w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -88,11 +89,20 @@
           onclick="window.location.href='/'"
           class="flex items-center gap-2 text-left w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
         >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 19.5 8.25 12l7.5-7.5"
+            />
           </svg>
-          
-          
 
           SSL Checker
         </button>
@@ -200,48 +210,81 @@
     </aside>
 
     <main class="flex-1 p-8">
-        <h1 class="text-2xl font-bold mb-6">Logs</h1>
+      <h1 class="text-2xl font-bold mb-6">Logs</h1>
 
-        <form method="get" action="/logs/filter" class="mb-6">
-            <label for="start" class="block">Startzeit:</label>
-            <input type="datetime-local" name="start" id="start" class="mb-2 p-2 border rounded">
-            <label for="end" class="block">Endzeit:</label>
-            <input type="datetime-local" name="end" id="end" class="mb-2 p-2 border rounded">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Filtern</button>
-        </form>
+      <form method="get" action="/logs/filter" class="mb-6">
+        <label for="start" class="block">Startzeit:</label>
+        <input
+          type="datetime-local"
+          name="start"
+          id="start"
+          class="mb-2 p-2 border rounded"
+        />
+        <label for="end" class="block">Endzeit:</label>
+        <input
+          type="datetime-local"
+          name="end"
+          id="end"
+          class="mb-2 p-2 border rounded"
+        />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+          Filtern
+        </button>
+      </form>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
-                <thead>
-                    <tr class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold">
-                        <th class="px-4 py-3">Website</th>
-                        <th class="px-4 py-3">Geprüft am</th>
-                        <th class="px-4 py-3">Ablaufdatum</th>
-                        <th class="px-4 py-3">Tage verbleibend</th>
-                        <th class="px-4 py-3">E-Mail gesendet?</th>
-                        <th class="px-4 py-3">Aktionen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                    <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                        <td class="px-4 py-2">{{ log.website.url }}</td>
-                        <td class="px-4 py-2">{{ log.checked_at.strftime("%d.%m.%Y %H:%M") }}</td>
-                        <td class="px-4 py-2">{{ log.expiry_date.strftime("%d.%m.%Y") if log.expiry_date else '-' }}</td>
-                        <td class="px-4 py-2">{{ log.remaining_days if log.remaining_days is not none else '-' }}</td>
-                        <td class="px-4 py-2">{{ "Ja" if log.email_sent else "Nein" }}</td>
-                        <td class="px-4 py-2">
-                            <form method="post" action="/logs/delete/{{ log.id }}" class="inline">
-                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded transition">Löschen</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
+          <thead>
+            <tr
+              class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold"
+            >
+              <th class="px-4 py-3">Website</th>
+              <th class="px-4 py-3">Geprüft am</th>
+              <th class="px-4 py-3">Ablaufdatum</th>
+              <th class="px-4 py-3">Tage verbleibend</th>
+              <th class="px-4 py-3">E-Mail gesendet?</th>
+              <th class="px-4 py-3">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr
+              class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            >
+              <td class="px-4 py-2">{{ log.website.url }}</td>
+              <td class="px-4 py-2">
+                {{ log.checked_at.strftime("%d.%m.%Y %H:%M") }}
+              </td>
+              <td class="px-4 py-2">
+                {{ log.expiry_date.strftime("%d.%m.%Y") if log.expiry_date else
+                '-' }}
+              </td>
+              <td class="px-4 py-2">
+                {{ log.remaining_days if log.remaining_days is not none else '-'
+                }}
+              </td>
+              <td class="px-4 py-2">
+                {{ "Ja" if log.email_sent else "Nein" }}
+              </td>
+              <td class="px-4 py-2">
+                <form
+                  method="post"
+                  action="/logs/delete/{{ log.id }}"
+                  class="inline"
+                >
+                  <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded transition"
+                  >
+                    Löschen
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </main>
-</body>
+  </body>
 </html>
