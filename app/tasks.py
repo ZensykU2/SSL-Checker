@@ -70,7 +70,7 @@ def check_certificates_loop(interval_seconds: int = 21600):
             finally:
                 db.close()
 
-            print("⏳ Waiting for next refresh...")
+            print("Waiting for next refresh...")
             time.sleep(interval_seconds)
 
     thread = threading.Thread(target=loop, daemon=True)

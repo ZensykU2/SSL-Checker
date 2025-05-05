@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, Query, HTTPException, status, Cookie
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -11,8 +11,8 @@ from jose import JWTError
 from fastapi.responses import JSONResponse
 
 from fastapi.staticfiles import StaticFiles
-from . import models, schemas, password_utils, security
-from .password_utils import verify_password, hash_password
+from . import models, password_utils, security
+from .password_utils import hash_password
 from .security import verify_token
 from .database import engine, SessionLocal
 from .models import Website, CheckLog
