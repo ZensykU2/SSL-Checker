@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def send_ssl_warning_email(to_email: str, website_url: str, expiry_date: datetime, remaining_days: int):
     sender = os.getenv("SENDER_EMAIL")
     api_key = os.getenv("SENDGRID_API_KEY")
@@ -47,7 +46,6 @@ Dein SSL-Wächter
 
         print(f"📧 E-Mail an {to_email} gesendet (Status: {response.status_code})")
 
-        # Debug-Antwort
         if response.status_code != 202:
             print("⚠️ SendGrid-Fehlerantwort:")
             print("Body:", response.body)
