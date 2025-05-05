@@ -1,21 +1,27 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean, UniqueConstraint
 from .database import Base
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
 
 
+
+
 class Website(Base):
     __tablename__ = "websites"
+    __table_args__ = (
+        UniqueConstraint('url', 'user_id', name='unique_user_website'),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
-    url = Column(String, unique=True, index=True, nullable=False)
+    url = Column(String, index=True, nullable=False)
     email = Column(String, nullable=False)
     threshold_days = Column(Integer, nullable=False)
     next_warning = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", backref="websites")
 
+    user = relationship("User", backref="websites")
     logs = relationship("CheckLog", back_populates="website", cascade="all, delete-orphan")
+
 
 class CheckLog(Base):
     __tablename__ = "check_logs"

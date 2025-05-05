@@ -9,7 +9,7 @@ from typing import Optional
 from datetime import datetime
 from jose import JWTError
 from fastapi.responses import JSONResponse
-
+from sqlalchemy import and_
 from fastapi.staticfiles import StaticFiles
 from . import models, password_utils, security
 from .password_utils import hash_password
@@ -209,25 +209,55 @@ async def create_admin(username: str = Form(...), password: str = Form(...),emai
 async def home(request: Request, current_user: models.User = Depends(get_current_user)):
     return templates.TemplateResponse("index.html", {"request": request,"is_admin": current_user.is_admin,"user_email": current_user.email})
 
+from sqlalchemy import and_
+
 @app.post("/submit")
-async def submit_form(request: Request, url: str = Form(...), email: str = Form(...),
-                      threshold: int = Form(...), 
-                      db: Session = Depends(get_db), 
-                      current_user: models.User = Depends(get_current_user)):
+async def submit_form(
+    request: Request,
+    url: str = Form(...),
+    email: str = Form(...),
+    threshold: int = Form(...),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     normalized_url = normalize_url(url)
+
+    existing_entry = db.query(Website).filter(
+        and_(Website.url == normalized_url, Website.user_id == current_user.id)
+    ).first()
+
+    if existing_entry:
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "error": "Du hast diese Website bereits hinzugefügt.",
+            "user_email": current_user.email,
+            "is_admin": current_user.is_admin
+        })
+
     entry = Website(
         url=normalized_url,
         email=email,
         threshold_days=threshold,
         user_id=current_user.id
     )
+
     try:
         db.add(entry)
         db.commit()
-        return templates.TemplateResponse("index.html", {"request": request, "message": "Gespeichert!", "user_email": current_user.email, "is_admin": current_user.is_admin})
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "message": "Gespeichert!",
+            "user_email": current_user.email,
+            "is_admin": current_user.is_admin
+        })
     except IntegrityError:
         db.rollback()
-        return templates.TemplateResponse("index.html", {"request": request, "error": "Diese URL existiert bereits.", "user_email": current_user.email, "is_admin": current_user.is_admin})
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "error": "Fehler beim Speichern der URL.",
+            "user_email": current_user.email,
+            "is_admin": current_user.is_admin
+        })
 
 @app.get("/my-websites", response_class=HTMLResponse)
 async def my_websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
