@@ -25,7 +25,7 @@ def send_ssl_warning_email(to_email: str, website_url: str, expiry_date: datetim
 Hallo,
 
 Das SSL-Zertifikat für {website_url} läuft am {formatted_expiry_date} ab.
-Das sind nur noch {remaining_days} Tage!
+Dies sind nur noch {remaining_days} Tage.
 
 Bitte erneuern Sie das Zertifikat rechtzeitig, um Warnmeldungen im Browser zu vermeiden.
 
@@ -51,6 +51,6 @@ Dein SSL-Wächter
             print("Headers:", response.headers)
 
     except Exception as e:
-        print(f"Ausnahme beim Senden an {to_email}: {e}")
+        print(f"Exception sending to {to_email}: {e}")
         if hasattr(e, 'body'):
-            print("📄 Fehlerantwort von SendGrid:", e.body)
+            print("Exception from SendGrid:", e.body)
