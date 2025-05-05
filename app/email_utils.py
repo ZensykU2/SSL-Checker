@@ -11,14 +11,14 @@ def send_ssl_warning_email(to_email: str, website_url: str, expiry_date: datetim
     api_key = os.getenv("SENDGRID_API_KEY")
 
     if not sender:
-        print("❌ Fehler: SENDER_EMAIL ist nicht gesetzt.")
+        print(" Fehler: SENDER_EMAIL not set.")
         return
 
     if not api_key:
-        print("❌ Fehler: SENDGRID_API_KEY ist nicht gesetzt.")
+        print("Error: SENDGRID_API_KEY not set.")
         return
 
-    subject = f"⚠️ SSL-Zertifikat läuft bald ab: {website_url}"
+    subject = f" SSL-Zertifikat läuft bald ab: {website_url}"
     formatted_expiry_date = expiry_date.strftime('%d.%m.%Y')
 
     content = f"""
@@ -29,7 +29,6 @@ Das sind nur noch {remaining_days} Tage!
 
 Bitte erneuern Sie das Zertifikat rechtzeitig, um Warnmeldungen im Browser zu vermeiden.
 
-Viele Grüße,
 Dein SSL-Wächter
     """
 
@@ -44,14 +43,14 @@ Dein SSL-Wächter
         sg = SendGridAPIClient(api_key)
         response = sg.send(message)
 
-        print(f"📧 E-Mail an {to_email} gesendet (Status: {response.status_code})")
+        print(f"E-Mail to {to_email} sent (Status: {response.status_code})")
 
         if response.status_code != 202:
-            print("⚠️ SendGrid-Fehlerantwort:")
+            print(" SendGrid-Error:")
             print("Body:", response.body)
             print("Headers:", response.headers)
 
     except Exception as e:
-        print(f"❌ Ausnahme beim Senden an {to_email}: {e}")
+        print(f"Ausnahme beim Senden an {to_email}: {e}")
         if hasattr(e, 'body'):
             print("📄 Fehlerantwort von SendGrid:", e.body)

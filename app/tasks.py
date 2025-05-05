@@ -10,14 +10,14 @@ from .email_utils import send_ssl_warning_email
 def check_certificates_loop(interval_seconds: int = 21600):
     def loop():
         while True:
-            print("🔁 Starting certificate verification...")
+            print("Starting certificate verification...")
             db: Session = SessionLocal()
             try:
                 websites = db.query(Website).all()
                 for site in websites:
                     expiry_date = get_ssl_expiry_date(site.url)
                     if not expiry_date:
-                        print(f"⚠️ No SSL-Data for {site.url}")
+                        print(f"No SSL-Data for {site.url}")
                         continue
 
                     now_utc = datetime.now(timezone.utc)
@@ -56,9 +56,8 @@ def check_certificates_loop(interval_seconds: int = 21600):
 
                             db.commit()
                     else:
-                        print(f"✅ {site.url} is OK ({remaining_days} days)")
+                        print(f"{site.url} is OK ({remaining_days} days)")
 
-                    # Log-Eintrag erstellen
                     log_entry = CheckLog(
                         website_id=site.id,
                         expiry_date=expiry_date,
