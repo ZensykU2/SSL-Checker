@@ -297,14 +297,14 @@ async def delete_website(website_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/websites", status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/logs/filter", response_class=HTMLResponse)
-async def filter_logs(request: Request, start: Optional[str] = None, end: Optional[str] = None, db: Session = Depends(get_db)):
+async def filter_logs(request: Request, start: Optional[str] = None, end: Optional[str] = None, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     query = db.query(CheckLog).join(Website)
     if start:
         query = query.filter(CheckLog.checked_at >= datetime.fromisoformat(start))
     if end:
         query = query.filter(CheckLog.checked_at <= datetime.fromisoformat(end))
     logs = query.order_by(CheckLog.checked_at.desc()).all()
-    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs})
+    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs, "is_admin": current_user.is_admin})
 
 @app.post("/logs/delete/{log_id}")
 async def delete_log(log_id: int, db: Session = Depends(get_db)):
