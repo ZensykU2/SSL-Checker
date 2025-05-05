@@ -309,5 +309,4 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
         url=f"/websites?success=E-Mail+an+{website.email}+gesendet", status_code=HTTP_303_SEE_OTHER
     )
 
-
 check_certificates_loop()

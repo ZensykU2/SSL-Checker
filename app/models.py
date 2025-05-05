@@ -37,8 +37,3 @@ class User(Base):
     password = Column(String)
     email = Column(String, unique=True, index=True, nullable=False)
     is_admin = Column(Boolean, default=False)
-
-    
-
-
-

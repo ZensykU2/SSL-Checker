@@ -6,36 +6,22 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from app import models  # Hier wird die Base importiert
-from app.database import SQLALCHEMY_DATABASE_URL  # Deine Datenbankverbindung
+from app import models  
+from app.database import SQLALCHEMY_DATABASE_URL
+from dotenv import load_dotenv  
 
-# App-Pfad hinzufügen
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# .env laden
-from dotenv import load_dotenv
 load_dotenv()
 
-# Alembic Config laden
 config = context.config
 fileConfig(config.config_file_name)
 
-# Datenbank-URL setzen
 config.set_main_option('sqlalchemy.url', SQLALCHEMY_DATABASE_URL)
-
-# Ziel-Metadaten für Alembic
-target_metadata = models.Base.metadata  # Models Base verwenden
-
+target_metadata = models.Base.metadata 
 
 def run_migrations_offline() -> None:
-    """Führe Migrationen im Offline-Modus aus.
-
-    Dies konfiguriert den Kontext mit nur einer URL und nicht einem Engine-Objekt,
-    aber ein Engine-Objekt ist auch hier akzeptabel.
-    Durch das Überspringen der Engine-Erstellung benötigen wir nicht einmal ein DBAPI.
-
-    Calls to context.execute() hier geben den gegebenen String an das Skriptausgabe aus.
-    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -49,10 +35,6 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Führe Migrationen im Online-Modus aus.
-
-    Hier müssen wir einen Engine erstellen und eine Verbindung mit dem Kontext herstellen.
-    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -67,8 +49,6 @@ def run_migrations_online() -> None:
         with context.begin_transaction():
             context.run_migrations()
 
-
-# Hier wird entschieden, ob im Offline- oder Online-Modus migriert werden soll
 if context.is_offline_mode():
     run_migrations_offline()
 else:
