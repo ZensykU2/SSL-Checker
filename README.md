@@ -123,8 +123,14 @@ http://127.0.0.1:8000
 - Set your API key in the .env file.
 - Emails are sent to the address associated with each website entry.
 
-## User Accounts
+### Authentication
 
-- Admin: admin | PW: admin123
-- User: user | PW: user123
+**Admin**
+- User: `admin`
+- Password: `admin123`
 
+**Warden**
+- User: `user`
+- Password: `user123`
+
+**After you can create your own account, either admin account by logging in with admin user, or normal user with normal register using your real E-Mail for testing.**
