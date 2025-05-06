@@ -94,7 +94,7 @@ target_metadata = None
 ```
 - With:
 ```bash
-target_metadata = Base.metadata
+target_metadata = models.Base.metadata
 ```
 ### 3. Generate and apply initial migration
 ```bash
@@ -106,9 +106,15 @@ alembic upgrade head
 ### Create users
 
 - Create admin and regular user by running:
+- Windows 
 ```bash
 python seed_users.py
 ```
+- Linux
+```bash
+python3 -m app.seed_users
+```
+
 ## Run the App
 ```bash
 uvicorn app.main:app --reload
