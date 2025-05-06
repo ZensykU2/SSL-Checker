@@ -7,9 +7,9 @@ It notifies users about expiring certificates and provides a web interface to ma
 
 ##  Requirements
 
-- Python 3.13+
+- Python 3.10+
 - Pip 25.0.0 +
-- PostgreSQL 16+ (e.g. [Download Here](https://www.postgresql.org/download/))
+- PostgreSQL 15+ (e.g. [Download Here](https://www.postgresql.org/download/))
 - Git
 - SendGrid account (for email notifications)
 
@@ -24,6 +24,7 @@ git clone http://192.168.100.68:3000/CristianTorre/SSL-Checker.git
 cd SSL-Checker
 ```
 ### 2. Create and activate virtual environment
+#### Note: If you use anything else but 'python', like python3, py etc. use those instead
 ```bash
 python -m venv venv
 ```
