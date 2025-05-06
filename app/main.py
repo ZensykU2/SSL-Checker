@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -11,14 +11,14 @@ from jose import JWTError
 from fastapi.responses import JSONResponse
 from sqlalchemy import and_
 from fastapi.staticfiles import StaticFiles
-from . import models, password_utils, security
-from .password_utils import hash_password
-from .security import verify_token
-from .database import engine, SessionLocal
-from .models import Website, CheckLog
-from .normalize_url import normalize_url
-from .email_utils import send_ssl_warning_email
-from .tasks import check_certificates_loop
+from app import models, password_utils, security
+from app.password_utils import hash_password
+from app.security import verify_token
+from app.database import engine, SessionLocal
+from app.models import Website, CheckLog
+from app.normalize_url import normalize_url
+from app.email_utils import send_ssl_warning_email
+from app.tasks import check_certificates_loop
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -54,7 +54,7 @@ def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = D
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Token ungültig")
-
+        
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == 401:
@@ -338,5 +338,3 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
     return RedirectResponse(
         url=f"/websites?success=E-Mail+an+{website.email}+gesendet", status_code=HTTP_303_SEE_OTHER
     )
-
-check_certificates_loop()
