@@ -1,9 +1,6 @@
 #!/bin/bash
 echo "Warte auf Datenbank..."
-sleep 5  
-
-echo "Lade Umgebungsvariablen..."
-export $(grep -v '^#' .env | xargs)
+sleep 30 
 
 echo "Migrationen werden ausgeführt..."
 alembic -c /app/alembic.ini upgrade head
