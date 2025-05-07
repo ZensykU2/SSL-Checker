@@ -60,31 +60,31 @@ docker-compose up --build
  
  - Windows
     - Create migration only:
-    ```bash
-    bash migrate.sh "Add table"
-    ```
+        ```bash
+        bash migrate.sh "Add table"
+        ```
     - Create and apply:
-    ```bash
-    bash migrate.sh "Add table" --apply
-    ```
+        ```bash
+        bash migrate.sh "Add table" --apply
+        ```
     - or
-    ```bash
-    bash migrate.sh "Add table" -a
-    ```
+        ```bash
+        bash migrate.sh "Add table" -a
+        ```
 
  - Git Bash / WSL / Linux Terminal
     - Create migration only:
-    ```bash
-    ./migrate.sh "Add table"
-    ```
+        ```bash
+        ./migrate.sh "Add table"
+        ```
     - Create and apply:
-    ```bash
-    ./migrate.sh "Add table" --apply
-    ```
+        ```bash
+        ./migrate.sh "Add table" --apply
+        ```
     - or
-    ```bash
-    ./migrate.sh "Add table" -a
-    ```
+        ```bash
+        ./migrate.sh "Add table" -a
+        ```
 
 ### 7. Shutting down and cleaning up
 
