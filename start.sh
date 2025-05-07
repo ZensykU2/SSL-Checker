@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Warte auf Datenbank..."
-sleep 30 
+sleep 10
 
 echo "Migrationen werden ausgeführt..."
 alembic -c /app/alembic.ini upgrade head
