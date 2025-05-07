@@ -60,7 +60,19 @@ docker-compose up
 
 ### 6. Alembic Migrations
 
-- Alembic will perform migrations by default every time you restart the containers, which you will need to do either way if you want to use your changes.
+- Alembic will apply migrations by default every time you restart the containers, if you wish to create a migration:
+ - Create migration only:
+ ```bash
+ ./migrate.sh "Add table"
+ ```
+ - Create and apply:
+ ```bash
+ ./migrate.sh "Add table" --apply
+ ```
+ - or
+```bash
+ ./migrate.sh "Add table" -a
+ ```
 
 ### 7. Shutting down and cleaning up
 
