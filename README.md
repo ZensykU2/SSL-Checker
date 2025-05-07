@@ -30,14 +30,10 @@ cd SSL-Checker
 
 - Using Docker Desktop, Podman, or Docker Compose:
 
-- First time
 ```bash
 docker-compose up --build
 ```
-- Otherwise
-```bash
-docker-compose up
-```
+
 ### 4. Access the Services 
 
 - SSL-Checker App: http://localhost:8000/
