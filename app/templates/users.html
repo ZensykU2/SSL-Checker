@@ -36,7 +36,7 @@
             <td class="px-4 py-2 flex gap-2">
               <form method="post" action="/users/toggle-admin/{{ user.id }}">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded transition">
-                  {{ 'Zu User machen' if user.is_admin else 'Zu Admin machen' }}
+                  {{ 'Zu User' if user.is_admin else 'Zu Admin' }}
                 </button>
               </form>
               <button onclick="openDeleteModal('{{ user.id }}')"
