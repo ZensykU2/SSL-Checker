@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from jose import JWTError
 from fastapi.responses import JSONResponse
 from sqlalchemy import and_
+from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from app import models, password_utils, security
 from app.password_utils import hash_password
@@ -23,11 +24,9 @@ from app.tasks import check_certificates_loop
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
 templates = Jinja2Templates(directory="app/templates")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 
 def get_db():
     db = SessionLocal()
@@ -35,6 +34,41 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    db = SessionLocal()
+    if db.query(models.User).count() == 0:
+        print("No users found. Creating default users.")
+        default_users = [
+            {
+                "username": "admin",
+                "email": "admin@example.com",
+                "password": "admin123",
+                "is_admin": True
+            },
+            {
+                "username": "user",
+                "email": "user@example.com",
+                "password": "user123",
+                "is_admin": False
+            }
+        ]
+        for user_data in default_users:
+            hashed_pw = hash_password(user_data["password"])
+            user = models.User(
+                username=user_data["username"],
+                email=user_data["email"],
+                password=hashed_pw,
+                is_admin=user_data["is_admin"]
+            )
+            db.add(user)
+        db.commit()
+    db.close()
+    yield
+
+app = FastAPI(lifespan=lifespan)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = Depends(get_db)):
     if not access_token:
@@ -338,3 +372,5 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
     return RedirectResponse(
         url=f"/websites?success=E-Mail+an+{website.email}+gesendet", status_code=HTTP_303_SEE_OTHER
     )
+
+check_certificates_loop()
