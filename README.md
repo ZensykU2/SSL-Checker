@@ -7,122 +7,73 @@ It notifies users about expiring certificates and provides a web interface to ma
 
 ##  Requirements
 
-- Python 3.10+
-- Pip 25.0.0 +
-- PostgreSQL 15+ (e.g. [Download Here](https://www.postgresql.org/download/))
-- Git
-- SendGrid account (for email notifications)
+- [Docker](https://www.docker.com/) or [Podman](https://podman.io/)
+    - Must support **Linux containers**
+- [Git](https://git-scm.com/)
+- [SendGrid](https://sendgrid.com) account (for email notifications)
 
 ---
 
-##  Project Setup
+##  Getting Started (Docker + pgAdmin)
 
-### 1. Clone the project
+### 1. Clone the Repository
 
 ```bash
 git clone http://192.168.100.68:3000/CristianTorre/SSL-Checker.git
 cd SSL-Checker
 ```
-### 2. Create and activate virtual environment
-#### Note: If you use anything else but 'python', like python3, py etc. use those instead
+### 2. Set Up Environment Vairables
+
+- Copy .env.example to .env and update values as needed.
+
+### 3. Run the Application
+
+- Using Docker Desktop, Podman, or Docker Compose:
+
+- First time
 ```bash
-python -m venv venv
+docker-compose up --build
 ```
-- Windows: 
+- Otherwise
 ```bash
-venv\Scripts\activate
+docker-compose up
 ```
-- macOS/Linux: 
+### 4. Access the Services 
+
+- SSL-Checker App: http://localhost:8000/
+- pgAdmin: http://localhost:5050/
+    - pgAdmin login:
+        - **Email:** admin@example.com
+        - **Password:** admin
+
+### 5. Setting up pgAdmin
+
+- If you prefer using an external PostgreSQL instance, change the DATABASE_URL in .env accordingly.
+
+- Once in, rightclick on Servers -> Register -> Server
+    - Choose a name -> Connection
+        - **Host name/address:** postgres
+        - **Port:** 5432
+        - **Username:** ssl_user
+        - **Password:** ssl_user123
+    - Save
+
+### 6. Alembic Migrations
+
+- Alembic will perform migrations by default every time you restart the containers, which you will need to do either way if you want to use your changes.
+
+### 7. Shutting down and cleaning up
+
+- You can safely shutdown the containers by entering CTRL-C in the terminal window docker is running in.
+
+- To stop and remove containers:
 ```bash
-source venv/bin/activate
+docker-compose down
 ```
-### 3. Install dependencies
+- To remove volumes (PostgreSQL data):
 ```bash
-pip install -r requirements.txt
+docker-compose down -v
 ```
-## PostgreSQL Setup
-
-
-### 2. Start PostgreSQL and access with your root user
-
-If you don't want to run PostgreSQL on your local machine, use the init_db_sql scripts content on the machine that has it installed.
-Change the .env file accordingly to connect to your external machine, the default port is 5432.
-
-```bash
-psql -u (your root user) -f init_db.sql
-```
-
-## Environment Configuration
-
-### 1. Create a .env file in the project root
-
-- Use .env.example as a template
-
-
-## Alembic (Database Migrations)
-
-### 1. Initialize Alembic (once)
-```bash
-alembic init alembic
-```
-### 2. Configure alembic/env.py
-
-Update the following:
-
-- Add this at the top:
-```bash
-import os
-import sys
-from dotenv import load_dotenv
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from app.database import Base
-from app import models
-load_dotenv()
-```
-- Find the following line:
-```bash
-config.set_main_option("sqlalchemy.url", "your-database-url-here")
-```
-- Replace it with database URL from .env:
-```bash
-config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
-```
-- Replace:
-```bash
-target_metadata = None
-```
-- With:
-```bash
-target_metadata = models.Base.metadata
-```
-### 3. Generate and apply initial migration
-```bash
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
-```
-## Seed Initial Users
-
-### Create users
-
-- Create admin and regular user by running:
-- Windows 
-```bash
-python seed_users.py
-```
-- Linux
-```bash
-python3 -m app.seed_users
-```
-
-## Run the App
-```bash
-uvicorn app.main:app --reload
-```
-
-App will be available at:
-http://127.0.0.1:8000
-
 ## Email Notifications
 
 - Uses SendGrid to send SSL and TSL expiry notifications.
@@ -131,12 +82,14 @@ http://127.0.0.1:8000
 
 ### Authentication
 
+Default test credentials:
+
 **Admin**
 - User: `admin`
 - Password: `admin123`
 
-**Warden**
+**User**
 - User: `user`
 - Password: `user123`
 
-**After you can create your own account, either admin account by logging in with admin user, or normal user with normal register using your real E-Mail for testing.**
+You can register new users via the web UI. Admin users can promote others after logging in.
