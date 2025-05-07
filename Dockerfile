@@ -20,6 +20,8 @@ RUN chmod +x /migrate.sh
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
 
+RUN apt-get update && apt-get install -y dos2unix && dos2unix /start.sh
+
 COPY ./app /app
 COPY ./alembic.ini /app/alembic.ini
 COPY ./alembic /alembic
