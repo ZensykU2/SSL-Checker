@@ -43,8 +43,8 @@ docker-compose up
 - SSL-Checker App: http://localhost:8000/
 - pgAdmin: http://localhost:5050/
     - pgAdmin login:
-        - **Email:** admin@example.com
-        - **Password:** admin
+        - **Email:** `admin@example.com`
+        - **Password:** `admin`
 
 ### 5. Setting up pgAdmin
 
@@ -52,10 +52,10 @@ docker-compose up
 
 - Once in, rightclick on Servers -> Register -> Server
     - Choose a name -> Connection
-        - **Host name/address:** postgres
-        - **Port:** 5432
-        - **Username:** ssl_user
-        - **Password:** ssl_user123
+        - **Host name/address:** `postgres`
+        - **Port:** `5432`
+        - **Username:** `ssl_user`
+        - **Password:** `ssl_user123`
     - Save
 
 ### 6. Alembic Migrations
