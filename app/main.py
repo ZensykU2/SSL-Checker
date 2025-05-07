@@ -375,6 +375,8 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
         return RedirectResponse(url="/websites?error=Kein+Ablaufdatum+gefunden", status_code=HTTP_303_SEE_OTHER)
 
     expiry_date = latest_log.expiry_date
+    if expiry_date.tzinfo is None:
+        expiry_date = expiry_date.replace(tzinfo=timezone.utc)
     remaining_days = (expiry_date - datetime.now(timezone.utc)).days
     send_ssl_warning_email(website.email, website.url, expiry_date, remaining_days)
 
