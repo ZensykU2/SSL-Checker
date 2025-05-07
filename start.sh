@@ -2,6 +2,7 @@
 echo "Warte auf Datenbank..."
 sleep 5
 
+
 echo "Migrationen werden ausgeführt..."
 alembic -c /app/alembic.ini upgrade head
 
