@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, BackgroundTasks
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -72,31 +72,22 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = Depends(get_db)):
     if not access_token:
-        raise HTTPException(status_code=401, detail="Token fehlt")
+        return RedirectResponse(url="/login", status_code=303)
 
     try:
         payload = verify_token(access_token)
         user_id = payload.get("user_id")
         if not user_id:
-            raise HTTPException(status_code=401, detail="Token ungültig")
+            return RedirectResponse(url="/login", status_code=303)
 
         user = db.query(models.User).filter(models.User.id == user_id).first()
         if not user:
-            raise HTTPException(status_code=401, detail="Benutzer nicht gefunden")
+            return RedirectResponse(url="/login", status_code=303)
 
         return user
 
     except JWTError:
-        raise HTTPException(status_code=401, detail="Token ungültig")
-        
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-    if exc.status_code == 401:
-        return templates.TemplateResponse("unauthorized.html", {"request": request})
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail":exc.detail}
-    )
+        return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
@@ -240,10 +231,28 @@ async def create_admin(username: str = Form(...), password: str = Form(...),emai
     return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request, current_user: models.User = Depends(get_current_user)):
-    return templates.TemplateResponse("index.html", {"request": request,"is_admin": current_user.is_admin,"user_email": current_user.email})
+async def home(request: Request, db: Session = Depends(get_db), access_token: Optional[str] = Cookie(None)):
+    if not access_token:
+        return RedirectResponse(url="/login", status_code=303)
 
-from sqlalchemy import and_
+    try:
+        payload = verify_token(access_token)
+        user_id = payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401)
+
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=401)
+
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "is_admin": user.is_admin,
+            "user_email": user.email
+        })
+
+    except JWTError:
+        return RedirectResponse(url="/login", status_code=303)
 
 @app.post("/submit")
 async def submit_form(
