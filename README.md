@@ -91,13 +91,13 @@ docker-compose up --build
 - You can safely shutdown the containers by entering CTRL-C in the terminal window docker is running in.
 
 - To stop and remove containers:
-```bash
-docker-compose down
-```
+    ```bash
+    docker-compose down
+    ```
 - To remove volumes (PostgreSQL data):
-```bash
-docker-compose down -v
-```
+    ```bash
+    docker-compose down -v
+    ```
 ## Email Notifications
 
 - Uses SendGrid to send SSL and TSL expiry notifications.
