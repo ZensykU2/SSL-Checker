@@ -54,40 +54,60 @@
       <h1 class="text-2xl font-bold mb-6">Logs</h1>
 
       <form method="get" action="/logs/filter" class="mb-6">
-        <label for="search" class="block">Website-Suche:</label>
-        <input
-          type="text"
-          name="search"
-          id="search"
-          placeholder="example.com"
-          class="mb-2 p-2 border rounded"
-        />
-        
+        <div class="flex flex-wrap items-end gap-4">
+          <div>
+            <label for="search"></label>
+            <input
+              type="text"
+              name="search"
+              id="search"
+              placeholder="Search"
+              class="p-2 border rounded w-48 dark: text-black"
+            />
+          </div>
 
-        <label for="start" class="block">Startzeit:</label>
-        <input
-          type="datetime-local"
-          name="start"
-          id="start"
-          class="mb-2 p-2 border rounded"
-        />
-        <label for="end" class="block">Endzeit:</label>
-        <input
-          type="datetime-local"
-          name="end"
-          id="end"
-          class="mb-2 p-2 border rounded"
-        />
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-          Filtern
-        </button>
+          <label for="start" class="block text-lg font-medium mb-1"
+            >Startzeit:</label
+          >
+          <input
+            type="datetime-local"
+            name="start"
+            id="start"
+            class="p-2 border rounded w-48"
+          />
+
+          <label for="end" class="block text-lg font-medium mb-1"
+            >Endzeit:</label
+          >
+          <input
+            type="datetime-local"
+            name="end"
+            id="end"
+            class="p-2 border rounded w-48"
+          />
+
+          <div class="mt-6">
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            >
+              Filtern
+            </button>
+            <a
+              href="/logs/filter"
+              class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+            >
+              Zurücksetzen
+            </a>
+          </div>
+        </div>
       </form>
 
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
           <thead>
             <tr
-              class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold"
+              class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold"
             >
               <th class="px-4 py-3">Website</th>
               <th class="px-4 py-3">Geprüft am</th>

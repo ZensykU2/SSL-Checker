@@ -13,7 +13,7 @@
           document.documentElement.classList.add('dark');
         }
       })();
-      </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -25,18 +25,32 @@
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex">
   {% include "partials/sidebar.html" %}
   
-
   <main class="flex-1 p-8">
     <h1 class="text-2xl font-bold mb-6">Alle Benutzer</h1>
+    <form method="get" action="/users" class="mb-4">
+      <div class="flex gap-4 items-center">
+        <label for="role" class="block text-lg font-medium mb-1">Filtern</label>
+        <select name="role" id="role" class="p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" onchange="this.form.submit()">
+          <option value="">Alle</option>
+          <option value="user" {% if request.query_params.role == "user" %} selected {% endif %}>User</option>
+          <option value="admin" {% if request.query_params.role == "admin" %} selected {% endif %}>Admin</option>
+        </select>
+        <a href="/users" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
+          Zurücksetzen
+        </a>
+      </div>
+    </form>
+
     {% if error %}
         <div class="mb-4 p-4 bg-red-100 text-red-800 rounded">
             {{ error }}
         </div>
     {% endif %}
+
     <div class="overflow-x-auto">
       <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
         <thead>
-          <tr class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold">
+          <tr class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold">
             <th class="px-4 py-3">Benutzername</th>
             <th class="px-4 py-3">E-Mail</th>
             <th class="px-4 py-3">Rolle</th>

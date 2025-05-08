@@ -190,11 +190,34 @@ async def update_profile(
     return templates.TemplateResponse("profile.html", {"request": request, "user": user, "message": "Profil aktualisiert!", "is_admin": current_user.is_admin})
 
 @app.get("/users", response_class=HTMLResponse)
-async def list_users(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def list_users(
+    request: Request,
+    role: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Nur Admins dürfen diese Seite sehen.")
-    users = db.query(models.User).all()
-    return templates.TemplateResponse("users.html", {"request": request, "users": users, "current_user_id": current_user.id, "is_admin": current_user.is_admin})
+    
+    query = db.query(models.User)
+    
+    if role == "user":
+        query = query.filter(models.User.is_admin == False)
+    elif role == "admin":
+        query = query.filter(models.User.is_admin == True)
+
+    users = query.all()
+    
+    return templates.TemplateResponse(
+        "users.html", 
+        {
+            "request": request, 
+            "users": users, 
+            "current_user_id": current_user.id, 
+            "is_admin": current_user.is_admin
+        }
+    )
+
 
 @app.post("/users/toggle-admin/{user_id}")
 async def toggle_admin(
@@ -399,9 +422,28 @@ async def submit_form(
         })
 
 @app.get("/my-websites", response_class=HTMLResponse)
-async def my_websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    websites = db.query(Website).filter(Website.user_id == current_user.id).all()
-    return templates.TemplateResponse("my_websites.html", {"request": request, "websites": websites, "is_admin": current_user.is_admin})
+async def websites(
+    request: Request,
+    search: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    query = db.query(Website).filter(Website.user_id == current_user.id)
+    
+    if search:
+        query = query.filter(Website.url.ilike(f"%{search}%"))
+    
+    websites = query.all()
+    
+    return templates.TemplateResponse(
+        "my_websites.html", 
+        {
+            "request": request, 
+            "websites": websites, 
+            "is_admin": current_user.is_admin
+        }
+    )
+
 
 @app.post("/my-websites/delete/{website_id}")
 async def delete_my_website(website_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
@@ -414,9 +456,28 @@ async def delete_my_website(website_id: int, db: Session = Depends(get_db), curr
     return RedirectResponse(url="/my-websites", status_code=303)
 
 @app.get("/websites", response_class=HTMLResponse)
-async def websites(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    websites = db.query(Website).all()
-    return templates.TemplateResponse("websites.html", {"request": request, "websites": websites, "is_admin": current_user.is_admin})
+async def websites(
+    request: Request,
+    search: Optional[str] = None, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    query = db.query(Website)
+    
+    if search:
+        query = query.filter(Website.url.ilike(f"%{search}%")) 
+    
+    websites = query.all()
+    
+    return templates.TemplateResponse(
+        "websites.html", 
+        {
+            "request": request, 
+            "websites": websites, 
+            "is_admin": current_user.is_admin
+        }
+    )
+
 
 @app.get("/logs", response_class=HTMLResponse)
 async def logs(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):

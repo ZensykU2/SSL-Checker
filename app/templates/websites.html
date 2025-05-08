@@ -14,7 +14,7 @@
             document.documentElement.classList.add('dark');
           }
         })();
-        </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -27,20 +27,44 @@
     {% include "partials/sidebar.html" %}
     <main class="flex-1 p-8">
         <h1 class="text-2xl font-bold mb-6">Gespeicherte Websites</h1>
+        
+        <form method="get" action="/websites" class="mb-6">
+            <div class="flex gap-4 items-center">
+
+                <input
+                    type="text"
+                    name="search"
+                    id="search"
+                    placeholder="Search"
+                    class="p-2 border rounded w-48 dark: text-black"
+                    value="{{ request.query_params.search }}"
+                />
+                <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                >
+                    Filtern
+                </button>
+                <a href="/websites" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
+                    Zurücksetzen
+                </a>
+            </div>
+        </form>
+
         {% if request.query_params.success %}
         <div class="mb-4 p-4 bg-green-100 text-green-800 rounded">
             {{ request.query_params.success }}
         </div>
-    {% elif request.query_params.error %}
+        {% elif request.query_params.error %}
         <div class="mb-4 p-4 bg-red-100 text-red-800 rounded">
             {{ request.query_params.error }}
         </div>
-    {% endif %}
-    
+        {% endif %}
+        
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
                 <thead>
-                    <tr class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold">
+                    <tr class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold">
                         <th class="px-4 py-3">Website</th>
                         <th class="px-4 py-3">E-Mail</th>
                         <th class="px-4 py-3">Schwellenwert (Tage)</th>

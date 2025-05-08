@@ -29,12 +29,33 @@
     {% include "partials/sidebar.html" %}
     <main class="flex-1 p-8">
       <h1 class="text-2xl font-bold mb-6">Meine Websites</h1>
+      <form method="get" action="/my-websites" class="mb-6">
+        <div class="flex gap-4 items-center">
 
+            <input
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search"
+                class="p-2 border rounded w-48 dark: text-black"
+                value="{{ request.query_params.search }}"
+            />
+            <button
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            >
+                Filtern
+            </button>
+            <a href="/my_websites" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
+                Zurücksetzen
+            </a>
+        </div>
+    </form>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
           <thead>
             <tr
-              class="bg-gray-100 dark:bg-gray-700 text-left text-sm font-semibold"
+              class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold"
             >
               <th class="px-4 py-3">URL</th>
               <th class="px-4 py-3">E-Mail</th>
