@@ -4,7 +4,18 @@
     <meta charset="UTF-8" />
     <title>Abgemeldet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="20;url=/login" />
+    <meta http-equiv="refresh" content="10;url=/login" />
+    <script>
+      (function () {
+        const theme = localStorage.getItem('theme');
+        if (
+          theme === 'dark' ||
+          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+      </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -20,7 +31,7 @@
       <h1 class="text-3xl font-bold">Du wurdest erfolgreich abgemeldet</h1>
       <p class="text-lg">Danke für deinen Besuch!</p>
       <p class="text-sm text-gray-600 dark:text-gray-400">
-        Du wirst in <span class="font-semibold">20 Sekunden</span> automatisch
+        Du wirst in <span class="font-semibold">10 Sekunden</span> automatisch
         zum Login weitergeleitet.
       </p>
 
