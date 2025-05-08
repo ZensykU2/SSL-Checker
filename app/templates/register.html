@@ -61,13 +61,13 @@
         </svg>
       </button>
     </div>
-    <div class="max-w-md w-full p-6 bg-white dark:bg-gray-800 rounded shadow">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold">Registrierung</h2>
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-sm">
+      
+        <h2 class="text-2xl font-bold mb-6 text-center">Registrierung</h2>
         {% if error %}
-        <p style="color: red">{{ error }}</p>
+        <p class="mt-4 text-red-600 dark:text-red-400">{{ error }}</p>
         {% endif %}
-      </div>
+      
 
       <form action="/register" method="post" class="space-y-4">
         <div>

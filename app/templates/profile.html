@@ -37,9 +37,7 @@
     <main class="flex-1 p-8">
       <h1 class="text-2xl font-bold mb-6">Dein Profil</h1>
 
-      {% if message %}
-      <p class="mt-4 text-green-600 dark:text-green-400">{{ message }}</p>
-      {% endif %}
+      
 
       <form method="POST" class="space-y-4 max-w-xl">
         <div>
@@ -109,6 +107,11 @@
           Speichern
         </button>
       </form>
+      {% if message %}
+        <p class="mt-4 text-green-600 dark:text-green-400">{{ message }}</p>
+        {% endif %} {% if error %}
+        <p class="mt-4 text-red-600 dark:text-red-400">{{ error }}</p>
+        {% endif %}
     </main>
     <script>
       function togglePassword(id) {

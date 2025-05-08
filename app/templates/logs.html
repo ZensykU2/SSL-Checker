@@ -5,15 +5,15 @@
     <title>Logs</title>
     <script>
       (function () {
-        const theme = localStorage.getItem('theme');
+        const theme = localStorage.getItem("theme");
         if (
-          theme === 'dark' ||
-          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          theme === "dark" ||
+          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
         ) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add("dark");
         }
       })();
-      </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -25,27 +25,26 @@
       input[type="datetime-local"] {
         background-color: white;
         color: black;
-        border: 1px solid #d1d5db; 
-        border-radius: 0.375rem;    
-        padding: 0.5rem 0.75rem;    
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
         width: 20%;
       }
-    
+
       .dark input[type="datetime-local"] {
-        background-color: #374151; 
+        background-color: #374151;
         color: white;
-        border-color: #4b5563;     
+        border-color: #4b5563;
       }
-    
+
       input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         filter: invert(0);
       }
-    
+
       .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         filter: invert(1);
       }
     </style>
-    
   </head>
   <body
     class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex"
@@ -55,6 +54,15 @@
       <h1 class="text-2xl font-bold mb-6">Logs</h1>
 
       <form method="get" action="/logs/filter" class="mb-6">
+        <label for="search" class="block">Website-Suche:</label>
+        <input
+          type="text"
+          name="search"
+          id="search"
+          placeholder="example.com"
+          class="mb-2 p-2 border rounded"
+        />
+
         <label for="start" class="block">Startzeit:</label>
         <input
           type="datetime-local"
