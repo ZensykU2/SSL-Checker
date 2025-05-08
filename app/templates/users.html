@@ -46,7 +46,11 @@
             {{ error }}
         </div>
     {% endif %}
-
+    {% if success %}
+    <div class="mb-4 p-4 bg-green-100 text-green-800 rounded">
+        {{ success }}
+    </div>
+    {% endif %}
     <div class="overflow-x-auto">
       <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
         <thead>

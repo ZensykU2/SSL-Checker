@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.status import HTTP_303_SEE_OTHER
+from starlette.middleware.sessions import SessionMiddleware
 from typing import Optional
 from datetime import datetime, timezone
 from jose import JWTError
@@ -69,6 +70,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(SessionMiddleware, secret_key = "secret_key")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = Depends(get_db)):
@@ -207,6 +209,8 @@ async def list_users(
         query = query.filter(models.User.is_admin == True)
 
     users = query.all()
+
+    success_message = request.session.pop("success", None)
     
     return templates.TemplateResponse(
         "users.html", 
@@ -214,7 +218,8 @@ async def list_users(
             "request": request, 
             "users": users, 
             "current_user_id": current_user.id, 
-            "is_admin": current_user.is_admin
+            "is_admin": current_user.is_admin,
+            "success": success_message,
         }
     )
 
@@ -319,6 +324,8 @@ async def delete_user(
 
     db.delete(user_to_delete)
     db.commit()
+
+    request.session["success"] = f"Benutzer '{user_to_delete.username}' wurde erfolgreich gelöscht."
     return RedirectResponse(url="/users", status_code=303)
 
 @app.get("/create-admin-form", response_class=HTMLResponse)
@@ -347,7 +354,7 @@ async def create_admin(request: Request, username: str = Form(...), password: st
     new_admin = models.User(username=username, password=hashed_password, email=email, is_admin=True)
     db.add(new_admin)
     db.commit()
-    return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+    return templates.TemplateResponse("create_admin.html", {"request": request, "message": "Einen neuen Admin erfolgreich erstellt.", "is_admin": current_user.is_admin})
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db), access_token: Optional[str] = Cookie(None)):
@@ -435,7 +442,7 @@ async def websites(
     
     websites = query.all()
     
-    
+
     return templates.TemplateResponse(
         "my_websites.html", 
         {

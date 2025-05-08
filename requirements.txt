@@ -10,5 +10,6 @@ python-dotenv
 python-multipart
 passlib[bcrypt]
 bcrypt<4.1
+itsdangerous>=2.1.0
 python-jose[cryptography]
 alembic
