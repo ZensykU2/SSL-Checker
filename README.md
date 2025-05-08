@@ -19,7 +19,7 @@ It notifies users about expiring certificates and provides a web interface to ma
 ### 1. Clone the Repository
 
 ```bash
-git clone http://192.168.100.68:3000/CristianTorre/SSL-Checker.git
+git clone https://github.com/ZensykU2/SSL-Checker.gi
 cd SSL-Checker
 ```
 ### 2. Set Up Environment Vairables
