@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -73,24 +73,33 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key = "secret_key")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-def get_current_user(access_token: Optional[str] = Cookie(None), db: Session = Depends(get_db)):
+def get_current_user(
+    access_token: Optional[str] = Cookie(None), 
+    db: Session = Depends(get_db)
+):
     if not access_token:
-        return RedirectResponse(url="/login", status_code=303)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
     try:
         payload = verify_token(access_token)
         user_id = payload.get("user_id")
         if not user_id:
-            return RedirectResponse(url="/login", status_code=303)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
         user = db.query(models.User).filter(models.User.id == user_id).first()
         if not user:
-            return RedirectResponse(url="/login", status_code=303)
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
         return user
 
     except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+@app.exception_handler(HTTPException)
+async def auth_exception_handler(request: Request, exc: HTTPException):
+    if exc.status_code == status.HTTP_401_UNAUTHORIZED:
         return RedirectResponse(url="/login", status_code=303)
+    raise exc
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
