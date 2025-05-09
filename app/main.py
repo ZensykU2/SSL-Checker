@@ -21,6 +21,7 @@ from app.database import engine, SessionLocal
 from app.models import Website, CheckLog
 from app.normalize_url import normalize_url
 from app.email_utils import send_ssl_warning_email
+from app.ssl_utils import perform_single_ssl_check
 from app.tasks import check_certificates_loop
 
 
@@ -232,7 +233,6 @@ async def list_users(
         }
     )
 
-
 @app.post("/users/toggle-admin/{user_id}")
 async def toggle_admin(
     request: Request,
@@ -282,7 +282,6 @@ async def toggle_admin(
     user.is_admin = not user.is_admin
     db.commit()
     return RedirectResponse(url="/users", status_code=303)
-
 
 @app.post("/users/delete/{user_id}")
 async def delete_user(
@@ -461,7 +460,6 @@ async def websites(
         }
     )
 
-
 @app.post("/my-websites/delete/{website_id}")
 async def delete_my_website(website_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     website = db.query(Website).filter(Website.id == website_id, Website.user_id == current_user.id).first()
@@ -495,7 +493,6 @@ async def websites(
         }
     )
 
-
 @app.get("/logs", response_class=HTMLResponse)
 async def logs(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     if not current_user.is_admin:
@@ -510,8 +507,6 @@ async def delete_website(website_id: int, db: Session = Depends(get_db)):
         db.delete(website)
         db.commit()
     return RedirectResponse(url="/websites", status_code=HTTP_303_SEE_OTHER)
-
-
 
 @app.get("/logs/filter", response_class=HTMLResponse)
 async def filter_logs(
@@ -539,7 +534,6 @@ async def filter_logs(
         "is_admin": current_user.is_admin
     })
 
-
 @app.post("/logs/delete/{log_id}")
 async def delete_log(log_id: int, db: Session = Depends(get_db)):
     log = db.query(CheckLog).filter(CheckLog.id == log_id).first()
@@ -555,20 +549,15 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
     if not website:
         return RedirectResponse(url="/websites?error=Website+nicht+gefunden", status_code=HTTP_303_SEE_OTHER)
 
-    latest_log = (
-        db.query(CheckLog)
-        .filter(CheckLog.website_id == website_id)
-        .order_by(CheckLog.checked_at.desc())
-        .first()
-    )
+    log_entry = perform_single_ssl_check(website, db)
+    if not log_entry or not log_entry.expiry_date:
+        return RedirectResponse(url="/websites?error=Kein+gültiges+SSL-Zertifikat+gefunden", status_code=HTTP_303_SEE_OTHER)
 
-    if not latest_log or not latest_log.expiry_date:
-        return RedirectResponse(url="/websites?error=Kein+Ablaufdatum+gefunden", status_code=HTTP_303_SEE_OTHER)
-
-    expiry_date = latest_log.expiry_date
+    expiry_date = log_entry.expiry_date
     if expiry_date.tzinfo is None:
         expiry_date = expiry_date.replace(tzinfo=timezone.utc)
     remaining_days = (expiry_date - datetime.now(timezone.utc)).days
+
     send_ssl_warning_email(website.email, website.url, expiry_date, remaining_days)
 
     return RedirectResponse(
