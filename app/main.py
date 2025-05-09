@@ -310,7 +310,13 @@ async def delete_user(
     current_user: models.User = Depends(get_current_user)
 ):
     user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
+    total_users = db.query(models.User).count()
+    per_page = 8
+    total_pages = (total_users // per_page) + (1 if total_users % per_page > 0 else 0)
 
+   
+    page = int(request.query_params.get('page', 1))
+    
     if not current_user.is_admin:
         users = db.query(models.User).all()
         return templates.TemplateResponse(
@@ -345,6 +351,7 @@ async def delete_user(
                 "users": users,
                 "error": "Du kannst dich nicht selbst löschen.",
                 "is_admin": current_user.is_admin,
+                "total_pages": total_pages,
             },
             status_code=400,
         )
@@ -352,8 +359,12 @@ async def delete_user(
     db.delete(user_to_delete)
     db.commit()
 
+    
+    
+
     request.session["success"] = f"Benutzer '{user_to_delete.username}' wurde erfolgreich gelöscht."
-    return RedirectResponse(url="/users", status_code=303)
+    return RedirectResponse(url=f"/users?page={page}&total_pages={total_pages}", status_code=303)
+
 
 @app.get("/create-admin-form", response_class=HTMLResponse)
 async def create_admin_form(request: Request, current_user: models.User = Depends(get_current_user)):
