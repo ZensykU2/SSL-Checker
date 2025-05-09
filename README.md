@@ -42,6 +42,8 @@ docker-compose up --build
         - **Email:** `admin@example.com`
         - **Password:** `admin`
 
+- fastAPI Docs: http://localhost:8000/docs
+
 ### 5. Setting up pgAdmin
 
 - If you prefer using an external PostgreSQL instance, change the DATABASE_URL in .env accordingly.
