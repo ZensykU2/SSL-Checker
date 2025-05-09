@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, status
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, Cookie, status, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -9,9 +9,8 @@ from starlette.middleware.sessions import SessionMiddleware
 from typing import Optional
 from datetime import datetime, timezone
 from jose import JWTError
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from fastapi.responses import JSONResponse
-from sqlalchemy import and_
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from app import models, password_utils, security
@@ -204,7 +203,9 @@ async def update_profile(
 @app.get("/users", response_class=HTMLResponse)
 async def list_users(
     request: Request,
+    page: int = 1,
     role: Optional[str] = None,
+    search: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
@@ -218,7 +219,20 @@ async def list_users(
     elif role == "admin":
         query = query.filter(models.User.is_admin == True)
 
-    users = query.all()
+    if search:
+        query = query.filter(models.User.username.ilike(f"%{search}%"))
+
+    
+    total_users = query.count()
+
+    per_page = 8
+
+    total_pages = (total_users // per_page) + (1 if total_users % per_page > 0 else 0)
+    
+    page = max(1, min(page, total_pages))
+
+    
+    users = query.offset((page - 1) * per_page).limit(per_page).all()
 
     success_message = request.session.pop("success", None)
     
@@ -230,8 +244,13 @@ async def list_users(
             "current_user_id": current_user.id, 
             "is_admin": current_user.is_admin,
             "success": success_message,
+            "page": page,
+            "total_pages": total_pages,
+            "role": role,
+            "search": search 
         }
     )
+
 
 @app.post("/users/toggle-admin/{user_id}")
 async def toggle_admin(
@@ -437,9 +456,10 @@ async def submit_form(
         })
 
 @app.get("/my-websites", response_class=HTMLResponse)
-async def websites(
+async def my_websites(
     request: Request,
     search: Optional[str] = None, 
+    page: int = 1,  
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
@@ -447,16 +467,25 @@ async def websites(
     
     if search:
         query = query.filter(Website.url.ilike(f"%{search}%"))
+
+    per_page = 8
+
+    total_count = query.count()
+    total_pages = (total_count // per_page) + (1 if total_count % per_page > 0 else 0)
     
-    websites = query.all()
+    page = max(1, min(page, total_pages))
     
+    websites = query.offset((page - 1) * per_page).limit(per_page).all()
 
     return templates.TemplateResponse(
         "my_websites.html", 
         {
             "request": request, 
-            "websites": websites, 
-            "is_admin": current_user.is_admin
+            "websites": websites,
+            "is_admin": current_user.is_admin,
+            "page": page,
+            "total_pages": total_pages,
+            "search": search,
         }
     )
 
@@ -474,31 +503,35 @@ async def delete_my_website(website_id: int, db: Session = Depends(get_db), curr
 async def websites(
     request: Request,
     search: Optional[str] = None, 
+    page: int = 1,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
     query = db.query(Website)
     
     if search:
-        query = query.filter(Website.url.ilike(f"%{search}%")) 
+        query = query.filter(Website.url.ilike(f"%{search}%"))
     
-    websites = query.all()
+    per_page = 8
+
+    total_count = query.count()
+    total_pages = (total_count // per_page) + (1 if total_count % per_page > 0 else 0)
+    
+    page = max(1, min(page, total_pages))
+
+    websites = query.offset((page - 1) * per_page).limit(per_page).all()
     
     return templates.TemplateResponse(
         "websites.html", 
         {
             "request": request, 
-            "websites": websites, 
-            "is_admin": current_user.is_admin
+            "websites": websites,
+            "is_admin": current_user.is_admin,
+            "page": page,
+            "total_pages": total_pages,
+            "search": search,  
         }
     )
-
-@app.get("/logs", response_class=HTMLResponse)
-async def logs(request: Request, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Zugriff verweigert.")
-    logs = db.query(CheckLog).join(Website).order_by(CheckLog.checked_at.desc()).all()
-    return templates.TemplateResponse("logs.html", {"request": request, "logs": logs, "is_admin": current_user.is_admin})
 
 @app.post("/delete/{website_id}")
 async def delete_website(website_id: int, db: Session = Depends(get_db)):
@@ -508,15 +541,19 @@ async def delete_website(website_id: int, db: Session = Depends(get_db)):
         db.commit()
     return RedirectResponse(url="/websites", status_code=HTTP_303_SEE_OTHER)
 
-@app.get("/logs/filter", response_class=HTMLResponse)
-async def filter_logs(
+@app.get("/logs", response_class=HTMLResponse)
+async def logs(
     request: Request,
+    page: int = Query(1, ge=1),
+    search: Optional[str] = None,
     start: Optional[str] = None,
     end: Optional[str] = None,
-    search: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Zugriff verweigert.")
+
     query = db.query(CheckLog).join(Website)
 
     if start:
@@ -526,11 +563,26 @@ async def filter_logs(
     if search:
         query = query.filter(func.lower(Website.url).like(f"%{search.lower()}%"))
 
-    logs = query.order_by(CheckLog.checked_at.desc()).all()
+    page_size = 8
+    total_logs = query.count()
+    total_pages = (total_logs + page_size - 1) // page_size
+    
+
+    logs = (
+        query.order_by(CheckLog.checked_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
 
     return templates.TemplateResponse("logs.html", {
         "request": request,
         "logs": logs,
+        "page": page,
+        "total_pages": total_pages,
+        "search": search,
+        "start": start,
+        "end": end,
         "is_admin": current_user.is_admin
     })
 
@@ -559,6 +611,9 @@ async def send_email(website_id: int, request: Request, db: Session = Depends(ge
     remaining_days = (expiry_date - datetime.now(timezone.utc)).days
 
     send_ssl_warning_email(website.email, website.url, expiry_date, remaining_days)
+
+    log_entry.email_sent = True
+    db.commit()
 
     return RedirectResponse(
         url=f"/websites?success=E-Mail+an+{website.email}+gesendet", status_code=HTTP_303_SEE_OTHER

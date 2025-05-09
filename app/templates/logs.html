@@ -53,7 +53,7 @@
     <main class="flex-1 p-8">
       <h1 class="text-2xl font-bold mb-6">Logs</h1>
 
-      <form method="get" action="/logs/filter" class="mb-6">
+      <form method="get" action="/logs" class="mb-6">
         <div class="flex flex-wrap items-end gap-4">
           <div>
             <label for="search"></label>
@@ -62,6 +62,7 @@
               name="search"
               id="search"
               placeholder="Search"
+              value="{{ search or '' }}"
               class="p-2 border rounded w-48 dark: text-black"
             />
           </div>
@@ -73,6 +74,7 @@
             type="datetime-local"
             name="start"
             id="start"
+            value="{{ start or '' }}"
             class="p-2 border rounded w-48"
           />
 
@@ -83,6 +85,7 @@
             type="datetime-local"
             name="end"
             id="end"
+            value="{{ end or '' }}"
             class="p-2 border rounded w-48"
           />
 
@@ -94,7 +97,7 @@
               Filtern
             </button>
             <a
-              href="/logs/filter"
+              href="/logs"
               class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition inline-flex items-center"
             >
               <svg
@@ -169,6 +172,52 @@
           </tbody>
         </table>
       </div>
+
+      {% if total_pages > 1 %}
+      <div class="mt-6 flex justify-center items-center gap-4">
+        <a
+          href="{{ url_for('logs') }}?page={% if page > 1 %}{{ page - 1 }}{% else %}{{ total_pages }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
+          class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2.5"
+            class="size-5 stroke-black dark:stroke-white"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 19.5 8.25 12l7.5-7.5"
+            />
+          </svg>
+        </a>
+
+        <span class="text-sm min-w-[100px] text-center">
+          Seite {{ page }} von {{ total_pages }}
+        </span>
+
+        <a
+          href="{{ url_for('logs') }}?page={% if page < total_pages %}{{ page + 1 }}{% else %}1{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
+          class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2.5"
+            class="size-5 stroke-black dark:stroke-white"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m8.25 4.5 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </a>
+      </div>
+      {% endif %}
     </main>
   </body>
 </html>
