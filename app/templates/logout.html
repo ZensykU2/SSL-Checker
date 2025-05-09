@@ -7,15 +7,15 @@
     <meta http-equiv="refresh" content="10;url=/login" />
     <script>
       (function () {
-        const theme = localStorage.getItem('theme');
+        const theme = localStorage.getItem("theme");
         if (
-          theme === 'dark' ||
-          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          theme === "dark" ||
+          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
         ) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add("dark");
         }
       })();
-      </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {

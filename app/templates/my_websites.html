@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (function () {
-        const theme = localStorage.getItem('theme');
+        const theme = localStorage.getItem("theme");
         if (
-          theme === 'dark' ||
-          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          theme === "dark" ||
+          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
         ) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add("dark");
         }
       })();
-      </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -31,28 +31,41 @@
       <h1 class="text-2xl font-bold mb-6">Meine Websites</h1>
       <form method="get" action="/my-websites" class="mb-6">
         <div class="flex gap-4 items-center">
-
-            <input
-                type="text"
-                name="search"
-                id="search"
-                placeholder="Search"
-                class="p-2 border rounded w-48 dark: text-black"
-                value="{{ request.query_params.search }}"
-            />
-            <button
-                type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+          <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Search"
+            class="p-2 border rounded w-48 dark: text-black"
+            value="{{ request.query_params.search }}"
+          />
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+          >
+            Filtern
+          </button>
+          <a
+            href="/my_websites"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="size-6"
             >
-                Filtern
-            </button>
-            <a href="/my_websites" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-              </svg>
-            </a>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+              />
+            </svg>
+          </a>
         </div>
-    </form>
+      </form>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
           <thead>

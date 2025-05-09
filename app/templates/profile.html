@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (function () {
-        const theme = localStorage.getItem('theme');
+        const theme = localStorage.getItem("theme");
         if (
-          theme === 'dark' ||
-          (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          theme === "dark" ||
+          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
         ) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add("dark");
         }
       })();
-      </script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -36,8 +36,6 @@
     {% include "partials/sidebar.html" %}
     <main class="flex-1 p-8">
       <h1 class="text-2xl font-bold mb-6">Dein Profil</h1>
-
-      
 
       <form method="POST" class="space-y-4 max-w-xl">
         <div>
@@ -108,10 +106,10 @@
         </button>
       </form>
       {% if message %}
-        <p class="mt-4 text-green-600 dark:text-green-400">{{ message }}</p>
-        {% endif %} {% if error %}
-        <p class="mt-4 text-red-600 dark:text-red-400">{{ error }}</p>
-        {% endif %}
+      <p class="mt-4 text-green-600 dark:text-green-400">{{ message }}</p>
+      {% endif %} {% if error %}
+      <p class="mt-4 text-red-600 dark:text-red-400">{{ error }}</p>
+      {% endif %}
     </main>
     <script>
       function togglePassword(id) {
