@@ -310,13 +310,14 @@ async def delete_user(
     current_user: models.User = Depends(get_current_user)
 ):
     user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
+
     total_users = db.query(models.User).count()
+    
     per_page = 8
     total_pages = (total_users // per_page) + (1 if total_users % per_page > 0 else 0)
 
-   
     page = int(request.query_params.get('page', 1))
-    
+
     if not current_user.is_admin:
         users = db.query(models.User).all()
         return templates.TemplateResponse(
