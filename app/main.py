@@ -251,14 +251,26 @@ async def list_users(
         }
     )
 
-
 @app.post("/users/toggle-admin/{user_id}")
 async def toggle_admin(
     request: Request,
     user_id: int,
+    page: int = 1,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+    query = db.query(models.User)
+
+    total_users = query.count()
+
+    per_page = 8
+
+    total_pages = (total_users // per_page) + (1 if total_users % per_page > 0 else 0)
+    
+    page = max(1, min(page, total_pages))
+
+    
+    users = query.offset((page - 1) * per_page).limit(per_page).all()
     if not current_user.is_admin:
         users = db.query(models.User).all()
         return templates.TemplateResponse(
@@ -294,6 +306,7 @@ async def toggle_admin(
                 "users": users,
                 "error": "Du kannst dir selbst keine Adminrechte entziehen.",
                 "is_admin": current_user.is_admin,
+                "total_pages": total_pages,
             },
             status_code=401,
         )
