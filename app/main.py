@@ -1,16 +1,16 @@
 
 from fastapi import Request, HTTPException, status
 from fastapi.responses import RedirectResponse
-from app import models
-from app.tasks import check_certificates_loop
+from app.database import models
+from app.server.tasks import check_certificates_loop
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.routers import auth, users, logs, websites, admin
-from app.database import SessionLocal, engine
-from app import models
-from app.password_utils import hash_password
+from app.database.database import SessionLocal, engine
+from app.database import models
+from app.utilities.password_utils import hash_password
 
 models.Base.metadata.create_all(bind=engine)
 

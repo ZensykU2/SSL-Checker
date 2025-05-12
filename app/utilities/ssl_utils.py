@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from app.models import Website, CheckLog
-from app.ssl_checker import get_ssl_expiry_date
+from app.database.models import Website, CheckLog
+from app.utilities.ssl_checker import get_ssl_expiry_date
 
 def perform_single_ssl_check(website: Website, db: Session) -> CheckLog | None:
     expiry_date = get_ssl_expiry_date(website.url)

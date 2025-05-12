@@ -3,16 +3,16 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 from jose import JWTError
-from app.database import get_db
-from app.models import Website, CheckLog
-from app.normalize_url import normalize_url
-from app.ssl_utils import perform_single_ssl_check
-from app.email_utils import send_ssl_warning_email
+from app.database.database import get_db
+from app.database.models import Website, CheckLog
+from app.utilities.normalize_url import normalize_url
+from app.utilities.ssl_utils import perform_single_ssl_check
+from app.utilities.email_utils import send_ssl_warning_email
 from app.routers.auth import get_current_user
 from datetime import datetime, timezone
-from app import models
+from app.database import models
 from fastapi.templating import Jinja2Templates
-from app.security import verify_token
+from app.utilities.security import verify_token
 from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 from starlette.status import HTTP_303_SEE_OTHER

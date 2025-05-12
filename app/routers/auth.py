@@ -6,10 +6,12 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from jose import JWTError
 
-from app import models, password_utils, security
-from app.database import get_db
+from app.database import models
+from app.database.database import get_db
 
 from fastapi.templating import Jinja2Templates
+
+from app.utilities import password_utils, security
 
 templates = Jinja2Templates(directory="app/templates")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")

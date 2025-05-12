@@ -2,9 +2,9 @@ from fastapi import APIRouter, Request, Depends, HTTPException, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Optional
-from app import models
-from app.database import get_db
-from app.password_utils import hash_password
+from app.database import models
+from app.database.database import get_db
+from app.utilities.password_utils import hash_password
 from app.routers.auth import get_current_user
 from fastapi.templating import Jinja2Templates
 

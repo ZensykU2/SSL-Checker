@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import Optional
 from datetime import datetime
-from app import models
-from app.database import get_db
-from app.models import CheckLog, Website
+from app.database import models
+from app.database.database import get_db
+from app.database.models import CheckLog, Website
 from app.routers.auth import get_current_user
 from typing import List
 

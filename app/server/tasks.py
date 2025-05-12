@@ -2,10 +2,10 @@ import time
 import threading
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
-from app.models import Website, CheckLog
-from app.ssl_checker import get_ssl_expiry_date
-from app.email_utils import send_ssl_warning_email
+from app.database.database import SessionLocal
+from app.database.models import Website, CheckLog
+from app.utilities.ssl_checker import get_ssl_expiry_date
+from app.utilities.email_utils import send_ssl_warning_email
 
 def check_certificates_loop(interval_seconds: int = 21600):
     def loop():

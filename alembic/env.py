@@ -6,8 +6,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from app import models  
-from app.database import SQLALCHEMY_DATABASE_URL
+from app.database import models  
+from app.database.database import SQLALCHEMY_DATABASE_URL
 from dotenv import load_dotenv  
 
 
