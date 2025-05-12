@@ -1,9 +1,8 @@
 
-from fastapi import Request, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import RedirectResponse
 from app.database import models
 from app.server.tasks import check_certificates_loop
-from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
