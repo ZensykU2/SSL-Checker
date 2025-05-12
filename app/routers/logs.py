@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, HTTPException, Query
+from fastapi import APIRouter, Request, Depends, HTTPException, Query, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -8,6 +8,7 @@ from app import models
 from app.database import get_db
 from app.models import CheckLog, Website
 from app.routers.auth import get_current_user
+from typing import List
 
 from fastapi.templating import Jinja2Templates
 
@@ -68,3 +69,30 @@ async def delete_log(log_id: int, db: Session = Depends(get_db)):
         db.commit()
         return RedirectResponse(url="/logs", status_code=303)
     raise HTTPException(status_code=404, detail="Log nicht gefunden")
+
+@router.post("/logs/delete-multiple")
+async def delete_multiple_logs(
+    log_ids: str = Form(...),  
+    db: Session = Depends(get_db)
+):
+    ids = [int(i) for i in log_ids.split(",") if i.strip().isdigit()]
+    print(f"IDs als Integer: {ids}")
+
+    try:
+        if ids:
+            logs = db.query(CheckLog).filter(CheckLog.id.in_(ids)).all()
+            print(f"Logs gefunden: {len(logs)}")
+            if logs:
+                deleted = db.query(CheckLog).filter(CheckLog.id.in_(ids)).delete(synchronize_session=False)
+                print(f"Anzahl der gelöschten Logs: {deleted}")
+                db.commit()
+            else:
+                print("Keine Logs gefunden zum Löschen")
+        else:
+            print("Keine gültigen IDs gefunden")
+    except Exception as e:
+        db.rollback()  
+        print(f"Fehler beim Löschen: {e}")
+        raise HTTPException(status_code=500, detail="Fehler beim Löschen der Logs")
+
+    return RedirectResponse(url="/logs", status_code=303)

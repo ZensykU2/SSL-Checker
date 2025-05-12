@@ -1,214 +1,164 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Logs</title>
-    <script>
-      (function () {
-        const theme = localStorage.getItem("theme");
-        if (
-          theme === "dark" ||
-          (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
-        ) {
-          document.documentElement.classList.add("dark");
-        }
-      })();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
-    <script src="/static/js/theme-toggle.js"></script>
-    <style>
-      input[type="datetime-local"] {
-        background-color: white;
-        color: black;
-        border: 1px solid #d1d5db;
-        border-radius: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        width: 20%;
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Logs</title>
+  <script>
+    (function () {
+      const theme = localStorage.getItem("theme");
+      if (
+        theme === "dark" ||
+        (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
       }
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+    };
+  </script>
+  <script src="/static/js/theme-toggle.js"></script>
+  <style>
+    input[type="datetime-local"] {
+      background-color: white;
+      color: black;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      width: 20%;
+    }
 
-      .dark input[type="datetime-local"] {
-        background-color: #374151;
-        color: white;
-        border-color: #4b5563;
-      }
+    .dark input[type="datetime-local"] {
+      background-color: #374151;
+      color: white;
+      border-color: #4b5563;
+    }
 
-      input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-        filter: invert(0);
-      }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(0);
+    }
 
-      .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-      }
-    </style>
-  </head>
-  <body
-    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex"
-  >
-    {% include "partials/sidebar.html" %}
-    <main class="flex-1 p-8">
-      <h1 class="text-2xl font-bold mb-6">Logs</h1>
+    .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+  </style>
+</head>
 
-      <form method="get" action="/logs" class="mb-6">
-        <div class="flex flex-wrap items-end gap-4">
-          <div>
-            <label for="search"></label>
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Search"
-              value="{{ search or '' }}"
-              class="p-2 border rounded w-48 dark: text-black"
-            />
-          </div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex">
+  {% include "partials/sidebar.html" %}
+  <main class="flex-1 p-8">
+    <h1 class="text-2xl font-bold mb-6">Logs</h1>
 
-          <label for="start" class="block text-lg font-medium mb-1"
-            >Startzeit:</label
-          >
-          <input
-            type="datetime-local"
-            name="start"
-            id="start"
-            value="{{ start or '' }}"
-            class="p-2 border rounded w-48"
-          />
-
-          <label for="end" class="block text-lg font-medium mb-1"
-            >Endzeit:</label
-          >
-          <input
-            type="datetime-local"
-            name="end"
-            id="end"
-            value="{{ end or '' }}"
-            class="p-2 border rounded w-48"
-          />
-
-          <div class="flex gap-2">
-            <button
-              type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition inline-flex items-center"
-            >
-              Filtern
-            </button>
-            <a
-              href="/logs"
-              class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition inline-flex items-center"
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" stroke-width="1.5" class="size-6 text-white">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M22.5,9A7.4522,7.4522,0,0,0,16,12.792V8H14v8h8V14H17.6167A5.4941,5.4941,0,1,1,22.5,22H22v2h.5a7.5,7.5,0,0,0,0-15Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M26,6H4V9.171l7.4142,7.4143L12,17.171V26h4V24h2v2a2,2,0,0,1-2,2H12a2,2,0,0,1-2-2V18L2.5858,10.5853A2,2,0,0,1,2,9.171V6A2,2,0,0,1,4,4H26Z" />
-            </svg> 
-              </svg>
-            </a>
-          </div>
+    <!-- FILTER-FORM -->
+    <form method="get" action="/logs" class="mb-6">
+      <div class="flex flex-wrap items-end gap-4">
+        <div>
+          <label for="search"></label>
+          <input type="text" name="search" id="search" placeholder="Search" value="{{ search or '' }}"
+            class="p-2 border rounded w-48 dark: text-black" />
         </div>
-      </form>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
-          <thead>
-            <tr
-              class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold"
-            >
-              <th class="px-4 py-3">Website</th>
-              <th class="px-4 py-3">Geprüft am</th>
-              <th class="px-4 py-3">Ablaufdatum</th>
-              <th class="px-4 py-3">Tage verbleibend</th>
-              <th class="px-4 py-3">E-Mail gesendet</th>
-              <th class="px-4 py-3">Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for log in logs %}
-            <tr
-              class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-            >
-              <td class="px-4 py-2">{{ log.website.url }}</td>
-              <td class="px-4 py-2">
-                {{ log.checked_at.strftime("%d.%m.%Y %H:%M") }}
-              </td>
-              <td class="px-4 py-2">
-                {{ log.expiry_date.strftime("%d.%m.%Y") if log.expiry_date else
-                '-' }}
-              </td>
-              <td class="px-4 py-2">
-                {{ log.remaining_days if log.remaining_days is not none else '-'
-                }}
-              </td>
-              <td class="px-4 py-2">
-                {{ "Ja" if log.email_sent else "Nein" }}
-              </td>
-              <td class="px-4 py-2">
-                <form
-                  method="post"
-                  action="/logs/delete/{{ log.id }}"
-                  class="inline"
-                >
-                  <button
-                    type="submit"
-                    class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded transition"
-                  >
-                    Löschen
-                  </button>
-                </form>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+        <label for="start" class="block text-lg font-medium mb-1">Startzeit:</label>
+        <input type="datetime-local" name="start" id="start" value="{{ start or '' }}"
+          class="p-2 border rounded w-48" />
 
-      {% if total_pages > 1 %}
-      <div class="mt-6 flex justify-center items-center gap-4">
-        <a
-          href="{{ url_for('logs') }}?page={% if page > 1 %}{{ page - 1 }}{% else %}{{ total_pages }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
-          class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2.5"
-            class="size-5 stroke-black dark:stroke-white"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 19.5 8.25 12l7.5-7.5"
-            />
-          </svg>
-        </a>
+        <label for="end" class="block text-lg font-medium mb-1">Endzeit:</label>
+        <input type="datetime-local" name="end" id="end" value="{{ end or '' }}" class="p-2 border rounded w-48" />
 
-        <span class="text-sm min-w-[100px] text-center">
-          Seite {{ page }} von {{ total_pages }}
-        </span>
+        <div class="flex gap-2">
+          <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition inline-flex items-center">
+            Filtern
+          </button>
+          <a href="/logs"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition inline-flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" stroke-width="1.5"
+              class="size-6 text-white">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M22.5,9A7.4522,7.4522,0,0,0,16,12.792V8H14v8h8V14H17.6167A5.4941,5.4941,0,1,1,22.5,22H22v2h.5a7.5,7.5,0,0,0,0-15Z" />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M26,6H4V9.171l7.4142,7.4143L12,17.171V26h4V24h2v2a2,2,0,0,1-2,2H12a2,2,0,0,1-2-2V18L2.5858,10.5853A2,2,0,0,1,2,9.171V6A2,2,0,0,1,4,4H26Z" />
+            </svg>
+          </a>
+        </div>
+    </form>
+   
+    <form method="post" action="/logs/delete-multiple" id="multi-delete-form-top">
+      <input type="hidden" name="log_ids" id="bulk-delete-ids" />
+      <button id="bulk-delete-button" type="submit"
+        class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition inline-flex items-center">
+        Mehrere löschen
+      </button>
+    </form>
+    </div>
 
-        <a
-          href="{{ url_for('logs') }}?page={% if page < total_pages %}{{ page + 1 }}{% else %}1{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
-          class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2.5"
-            class="size-5 stroke-black dark:stroke-white"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m8.25 4.5 7.5 7.5-7.5 7.5"
-            />
-          </svg>
-        </a>
-      </div>
-      {% endif %}
-    </main>
-  </body>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white dark:bg-gray-800 rounded shadow-md">
+        <thead>
+          <tr class="bg-gray-200 dark:bg-gray-700 text-left text-sm font-semibold">
+            <th class="px-4 py-3"><input type="checkbox" id="select-all" /></th>
+            <th class="px-4 py-3">Website</th>
+            <th class="px-4 py-3">Geprüft am</th>
+            <th class="px-4 py-3">Ablaufdatum</th>
+            <th class="px-4 py-3">Tage verbleibend</th>
+            <th class="px-4 py-3">E-Mail gesendet</th>
+            <th class="px-4 py-3">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            <td class="px-4 py-2">
+              <input type="checkbox" value="{{ log.id }}" class="log-checkbox" />
+            </td>
+            <td class="px-4 py-2">{{ log.website.url }}</td>
+            <td class="px-4 py-2">{{ log.checked_at.strftime("%d.%m.%Y %H:%M") }}</td>
+            <td class="px-4 py-2">{{ log.expiry_date.strftime("%d.%m.%Y") if log.expiry_date else '-' }}</td>
+            <td class="px-4 py-2">{{ log.remaining_days if log.remaining_days is not none else '-' }}</td>
+            <td class="px-4 py-2">{{ "Ja" if log.email_sent else "Nein" }}</td>
+            <td class="px-4 py-2">
+              <form method="post" action="/logs/delete/{{ log.id }}" class="inline single-delete-form">
+                <button type="submit"
+                  class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded transition">
+                  Löschen
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <div class="mt-6 flex justify-center items-center gap-4">
+      <a href="{{ url_for('logs') }}?page={% if page > 1 %}{{ page - 1 }}{% else %}{{ total_pages }}{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
+        class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+          class="size-5 stroke-black dark:stroke-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      </a>
+
+      <span class="text-sm min-w-[100px] text-center">
+        Seite {{ page }} von {{ total_pages }}
+      </span>
+
+      <a href="{{ url_for('logs') }}?page={% if page < total_pages %}{{ page + 1 }}{% else %}1{% endif %}{% if search %}&search={{ search }}{% endif %}{% if start %}&start={{ start }}{% endif %}{% if end %}&end={{ end }}{% endif %}"
+        class="bg-gray-300 hover:bg-gray-400 text-black px-2 py-2 rounded text-center dark:hover:bg-gray-400 dark:bg-gray-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+          class="size-5 stroke-black dark:stroke-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </a>
+    </div>
+    {% endif %}
+  </main>
+
+  <script src="/static/js/cascade-log-del.js"></script>
+</body>
 </html>
