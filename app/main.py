@@ -373,9 +373,6 @@ async def delete_user(
     db.delete(user_to_delete)
     db.commit()
 
-    
-    
-
     request.session["success"] = f"Benutzer '{user_to_delete.username}' wurde erfolgreich gelöscht."
     return RedirectResponse(url=f"/users?page={page}&total_pages={total_pages}", status_code=303)
 
