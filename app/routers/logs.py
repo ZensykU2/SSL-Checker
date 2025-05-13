@@ -63,7 +63,6 @@ async def logs(
         "is_admin": current_user.is_admin
     })
 
-
 @router.post("/logs/delete/{log_id}")
 async def delete_log(log_id: int, db: Session = Depends(get_db), current_user: Optional[models.User] = Depends(get_current_user)):
 
