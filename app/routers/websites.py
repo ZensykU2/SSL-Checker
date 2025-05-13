@@ -22,28 +22,20 @@ router = APIRouter()
 
 
 @router.get("/", response_class=HTMLResponse)
-async def home(request: Request, db: Session = Depends(get_db), access_token: Optional[str] = Cookie(None)):
-    if not access_token:
+async def home(
+    request: Request,
+    current_user: Optional[models.User] = Depends(get_current_user)
+):
+    if not current_user:
         return RedirectResponse(url="/login", status_code=303)
 
-    try:
-        payload = verify_token(access_token)
-        user_id = payload.get("user_id")
-        if not user_id:
-            raise HTTPException(status_code=401)
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "is_admin": current_user.is_admin,
+        "user_email": current_user.email
+    })
 
-        user = db.query(models.User).filter(models.User.id == user_id).first()
-        if not user:
-            raise HTTPException(status_code=401)
 
-        return templates.TemplateResponse("index.html", {
-            "request": request,
-            "is_admin": user.is_admin,
-            "user_email": user.email
-        })
-
-    except JWTError:
-        return RedirectResponse(url="/login", status_code=303)
 
 @router.post("/submit")
 async def submit_form(
@@ -99,8 +91,11 @@ async def my_websites(
     search: Optional[str] = None, 
     page: int = 1,  
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
     query = db.query(Website).filter(Website.user_id == current_user.id)
     
     if search:
@@ -143,8 +138,11 @@ async def websites(
     search: Optional[str] = None, 
     page: int = 1,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
     query = db.query(Website)
     
     if search:

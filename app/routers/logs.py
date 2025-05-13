@@ -24,8 +24,11 @@ async def logs(
     start: Optional[str] = None,
     end: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Zugriff verweigert.")
 
@@ -41,7 +44,6 @@ async def logs(
     page_size = 8
     total_logs = query.count()
     total_pages = (total_logs + page_size - 1) // page_size
-    
 
     logs = (
         query.order_by(CheckLog.checked_at.desc())
@@ -61,8 +63,13 @@ async def logs(
         "is_admin": current_user.is_admin
     })
 
+
 @router.post("/logs/delete/{log_id}")
-async def delete_log(log_id: int, db: Session = Depends(get_db)):
+async def delete_log(log_id: int, db: Session = Depends(get_db), current_user: Optional[models.User] = Depends(get_current_user)):
+
+    if not current_user or not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Zugriff verweigert.")
+
     log = db.query(CheckLog).filter(CheckLog.id == log_id).first()
     if log:
         db.delete(log)
@@ -73,8 +80,12 @@ async def delete_log(log_id: int, db: Session = Depends(get_db)):
 @router.post("/logs/delete-multiple")
 async def delete_multiple_logs(
     log_ids: str = Form(...),  
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user or not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Zugriff verweigert.")
+
     ids = [int(i) for i in log_ids.split(",") if i.strip().isdigit()]
     print(f"IDs als Integer: {ids}")
 

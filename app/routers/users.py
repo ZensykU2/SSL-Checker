@@ -12,8 +12,16 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/profile", response_class=HTMLResponse)
-async def profile_form(request: Request, current_user: models.User = Depends(get_current_user)):
-    return templates.TemplateResponse("profile.html", {"request": request, "user": current_user, "is_admin": current_user.is_admin})
+async def profile_form(request: Request, current_user: Optional[models.User] = Depends(get_current_user)):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "user": current_user,
+        "is_admin": current_user.is_admin
+    })
+
 
 @router.post("/profile", response_class=HTMLResponse)
 async def update_profile(
@@ -22,8 +30,10 @@ async def update_profile(
     email: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
     
     existing_user = db.query(models.User).filter(
         ((models.User.username == username) | (models.User.email == email)) &
@@ -53,8 +63,12 @@ async def list_users(
     role: Optional[str] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Nur Admins dürfen diese Seite sehen.")
     
@@ -103,8 +117,11 @@ async def toggle_admin(
     user_id: int,
     page: int = 1,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
     query = db.query(models.User)
 
     total_users = query.count()
@@ -166,8 +183,11 @@ async def delete_user(
     request: Request,
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
+    current_user: Optional[models.User] = Depends(get_current_user)
 ):
+    if not current_user:
+        return RedirectResponse(url="/login", status_code=303)
+    
     user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
 
     total_users = db.query(models.User).count()

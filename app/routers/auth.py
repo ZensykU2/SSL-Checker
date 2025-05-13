@@ -23,23 +23,23 @@ def get_current_user(
     db: Session = Depends(get_db)
 ) -> models.User:
     if not access_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        return None
 
     try:
         payload = security.verify_token(access_token)
+        if payload is None:
+            return None
+        
         user_id = payload.get("user_id")
 
         if not user_id:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            return None
 
         user = db.query(models.User).filter(models.User.id == user_id).first()
-        if not user:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
         return user
 
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        return None
 
 
 @router.get("/login", response_class=HTMLResponse)
