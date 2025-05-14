@@ -1,0 +1,20 @@
+{
+  "name": "ssl-checker",
+  "version": "1.0.0",
+  "description": "A web-based SSL/TLS certificate monitoring tool built with **FastAPI**, **PostgreSQL**, and **SendGrid**.  \r It notifies users about expiring certificates and provides a web interface to manage monitored websites.",
+  "repository": {
+    "type": "git",
+    "url": "http://192.168.100.68:3000/CristianTorre/SSL-Checker.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.6",
+    "tailwindcss": "^4.1.6"
+  }
+}

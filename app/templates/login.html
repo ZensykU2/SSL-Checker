@@ -15,16 +15,12 @@
         }
       })();
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
+    <link href="/static/css/output.css" rel="stylesheet">
     <script src="/static/js/theme-toggle.js"></script>
+    <script src="/static/js/password-toggle.js"></script>
   </head>
   <body
-    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center items-center min-h-screen"
+    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center items-center min-h-screen transition-colors duration-500"
   >
     <div class="absolute top-4 right-4">
       <button
@@ -119,7 +115,7 @@
 
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          class="w-full bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
         >
           Einloggen
         </button>
@@ -132,11 +128,5 @@
         >
       </div>
     </div>
-    <script>
-      function togglePassword(id) {
-        const input = document.getElementById(id);
-        input.type = input.type === "password" ? "text" : "password";
-      }
-    </script>
   </body>
 </html>

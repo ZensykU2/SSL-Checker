@@ -15,17 +15,13 @@
         }
       })();
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
+    <link href="/static/css/output.css" rel="stylesheet">
     <script src="/static/js/theme-toggle.js"></script>
+    <script src="/static/js/password-toggle.js"></script>
   </head>
 
   <body
-    class="transition-colors duration-300 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center"
+    class="transition-colors duration-500 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center"
   >
     <div class="absolute top-4 right-4">
       <button
@@ -125,7 +121,7 @@
 
         <button
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-700"
+          class="w-full bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
         >
           Registrieren
         </button>
@@ -135,12 +131,5 @@
         <a href="/login" class="text-blue-600 hover:underline">Log In</a>
       </div>
     </div>
-
-    <script>
-      function togglePassword(id) {
-        const input = document.getElementById(id);
-        input.type = input.type === "password" ? "text" : "password";
-      }
-    </script>
   </body>
 </html>

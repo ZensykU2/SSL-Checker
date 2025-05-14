@@ -15,23 +15,12 @@
         }
       })();
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
+    <link href="/static/css/output.css" rel="stylesheet">
     <script src="/static/js/theme-toggle.js"></script>
-    <style>
-      input[type="number"]::-webkit-outer-spin-button,
-      input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-    </style>
+    <script src="/static/js/password-toggle.js"></script>
   </head>
   <body
-    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex"
+    class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex transition-colors duration-500"
   >
     {% include "partials/sidebar.html" %}
     <main class="flex-1 p-8">
@@ -111,11 +100,5 @@
       <p class="mt-4 text-red-600 dark:text-red-400">{{ error }}</p>
       {% endif %}
     </main>
-    <script>
-      function togglePassword(id) {
-        const input = document.getElementById(id);
-        input.type = input.type === "password" ? "text" : "password";
-      }
-    </script>
   </body>
 </html>

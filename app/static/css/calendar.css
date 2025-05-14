@@ -1,0 +1,23 @@
+
+input[type="datetime-local"] {
+      background-color: white;
+      color: black;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      width: 20%;
+}
+
+.dark input[type="datetime-local"] {
+      background-color: #374151;
+      color: white;
+      border-color: #4b5563;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(0);
+}
+
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+}

@@ -1,3 +1,5 @@
+node_modules/
+/app/static/css/output.css
 
 __pycache__/
 *.py[cod]

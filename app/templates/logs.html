@@ -15,40 +15,12 @@
       }
     })();
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-    };
-  </script>
+  <link href="/static/css/output.css" rel="stylesheet">
   <script src="/static/js/theme-toggle.js"></script>
-  <style>
-    input[type="datetime-local"] {
-      background-color: white;
-      color: black;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      padding: 0.5rem 0.75rem;
-      width: 20%;
-    }
-
-    .dark input[type="datetime-local"] {
-      background-color: #374151;
-      color: white;
-      border-color: #4b5563;
-    }
-
-    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-      filter: invert(0);
-    }
-
-    .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-    }
-  </style>
+  <link href="/static/css/calendar.css" rel="stylesheet"></link>
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex transition-colors duration-500">
   {% include "partials/sidebar.html" %}
   <main class="flex-1 p-8">
     <h1 class="text-2xl font-bold mb-6">Logs</h1>
@@ -58,7 +30,7 @@
         <div>
           <label for="search"></label>
           <input type="text" name="search" id="search" placeholder="Search" value="{{ search or '' }}"
-            class="p-2 border rounded w-48 dark: text-black" />
+            class="p-2 border rounded w-48 bg-white text-black" />
         </div>
 
         <label for="start" class="block text-lg font-medium mb-1">Startzeit:</label>
@@ -89,7 +61,7 @@
     <form method="post" action="/logs/delete-multiple" id="multi-delete-form-top">
       <input type="hidden" name="log_ids" id="bulk-delete-ids" />
       <button id="bulk-delete-button" type="submit"
-        class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition inline-flex items-center">
+        class="hidden bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition items-center">
         Mehrere löschen
       </button>
     </form>

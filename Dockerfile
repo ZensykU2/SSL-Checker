@@ -1,18 +1,25 @@
 FROM python:3.11-slim
 
-
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     gcc \
     libffi-dev \
     libssl-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm
 
 WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./package.json ./package-lock.json ./
+RUN npm install
 
 COPY ./migrate.sh /migrate.sh
 RUN chmod +x /migrate.sh
