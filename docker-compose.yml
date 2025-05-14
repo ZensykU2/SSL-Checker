@@ -37,7 +37,10 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
+      - ./app:/app/app
+      - ./alembic:/app/alembic
+      - ./start.sh:/start.sh
+      - ./app/static:/app/static
     networks:
       - ssl_network
 
