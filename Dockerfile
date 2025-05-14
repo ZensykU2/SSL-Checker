@@ -25,6 +25,7 @@ RUN npm install
 COPY ./migrate.sh /migrate.sh
 RUN chmod +x /migrate.sh
 
+
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
 
