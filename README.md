@@ -119,4 +119,5 @@ Default test credentials:
 - User: `user`
 - Password: `user123`
 
+You can change the password for the two users created in the .env file you should have created earlier.
 You can register new users via the web UI. Admin users can promote others after logging in.
