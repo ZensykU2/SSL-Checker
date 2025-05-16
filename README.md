@@ -111,7 +111,6 @@ docker-compose up --build
 
 Default test credentials:
 
-
 **Admin**
 - User: `admin`
 - Password: `admin123`
